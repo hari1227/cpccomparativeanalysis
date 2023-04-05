@@ -23,7 +23,7 @@ sap.ui.define([
                 // });
 
                 $.get({
-                    url: "../comparative-analysis/RFQEventCompDetailsProj",
+                    url: "./comparative-analysis/RFQEventCompDetailsProj",
                     success: function(resp) {
                         this.showComparativeTable(resp.value);
                     }.bind(this),

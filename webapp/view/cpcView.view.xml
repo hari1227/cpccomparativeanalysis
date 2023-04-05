@@ -9,7 +9,7 @@
     <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false">
 
         <semantic:titleHeading>
-            <Title id="_IDGenTitle1" text="{i18n>worklistTitle}" level="H2"/>
+            <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
         </semantic:titleHeading>
 
         <semantic:content>
@@ -55,8 +55,7 @@
                 <IconTabBar id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
                     <items>
                         <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
-                            <Text id="_IDGenText1" text="Select RFQ and RFQ Event to show Comparative Analysis...." />
-                            <smartTable:SmartTable id="_IDGenSmartTable1">
+                             <smartTable:SmartTable id="_IDGenSmartTable1">
                                 <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true">
                                     <headerToolbar>
                                         <OverflowToolbar id="_IDGenOverflowToolbar1">
@@ -74,7 +73,6 @@
                             </smartTable:SmartTable>
                         </IconTabFilter>
                         <IconTabFilter id="_IDGenIconTabFilter2" text="Sales/Purchase Summary" key="SS">
-                            <Text id="_IDGenText2" text= "Sales/Purchase Summary here ..." />
                             <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
                                 <content>
                                     <Table id="salesTable" items="{/SalesSummary}">
