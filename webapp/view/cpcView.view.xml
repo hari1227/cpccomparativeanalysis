@@ -1,0 +1,136 @@
+<mvc:View controllerName="cpccomparativeanalysis.controller.cpcView"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:filterbar = "sap.ui.comp.filterbar"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:core="sap.ui.core"
+    xmlns:smartTable="sap.ui.comp.smarttable">
+
+    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false">
+
+        <semantic:titleHeading>
+            <Title id="_IDGenTitle1" text="{i18n>worklistTitle}" level="H2"/>
+        </semantic:titleHeading>
+
+        <semantic:content>
+
+            <VBox id="contentLayout">
+                <filterbar:FilterBar id="RFQFilter">
+                    <filterbar:filterGroupItems>
+                        <filterbar:FilterGroupItem id="_IDGenFilterGroupItem1" groupName="RFQFilter" label="RFQ" name="Ebeln" partOfCurrentVariant="true" visibleInFilterBar="true">
+                            <filterbar:control>
+                                <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
+                                    <core:Item id="RFQFilterItems" key="{Ebeln}" text="{Ebeln}"/>
+                                </ComboBox>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+                        <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
+                            <filterbar:control>
+                                  <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested">
+                                    <suggestionColumns>
+                                        <Column>
+                                            <Label text="RFQ"/>
+                                        </Column>
+                                        <Column>
+                                            <Label text="Internal ID"/>
+                                        </Column>
+                                        <Column>
+                                            <Label text="Title"/>
+                                        </Column>
+                                    </suggestionColumns>
+                                    <suggestionRows>
+                                        <ColumnListItem>
+                                            <Label text="{Ebeln_Ebeln}" />
+                                            <Label text="{internalId}" />
+                                            <Label text="{title}" />
+                                        </ColumnListItem>
+                                    </suggestionRows>
+                                </MultiInput> 
+                                
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+                    </filterbar:filterGroupItems>
+                </filterbar:FilterBar>
+
+                <IconTabBar id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
+                    <items>
+                        <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
+                            <Text id="_IDGenText1" text="Select RFQ and RFQ Event to show Comparative Analysis...." />
+                            <smartTable:SmartTable id="_IDGenSmartTable1">
+                                <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true">
+                                    <headerToolbar>
+                                        <OverflowToolbar id="_IDGenOverflowToolbar1">
+                                            <Title id="tableHeader" text="List" level="H3"/>
+                                            <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                                            <SearchField id="searchField" tooltip="Search here" search=".onSearch">
+                                                <layoutData>
+                                                    <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" maxWidth="200px" priority="NeverOverflow"/>
+                                                </layoutData>
+                                            </SearchField>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <!-- Our code in the controller goes here -->
+                                </Table>
+                            </smartTable:SmartTable>
+                        </IconTabFilter>
+                        <IconTabFilter id="_IDGenIconTabFilter2" text="Sales/Purchase Summary" key="SS">
+                            <Text id="_IDGenText2" text= "Sales/Purchase Summary here ..." />
+                            <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
+                                <content>
+                                    <Table id="salesTable" items="{/SalesSummary}">
+                                        <columns>
+                                            <Column id="nameColumn">
+                                                <Text text="Sales Summary" id="nameColumnTitle"/>
+                                            </Column>
+                                            <Column id="unitNumberColumn" hAlign="End">
+                                                <Text text="Quantity in KTL" id="unitNumberColumnTitle"/>
+                                            </Column>
+                                        </columns>
+
+                                        <items>
+                                            <ColumnListItem id="_IDGenColumnListItem2">
+                                                <cells>
+                                                    <Text id="_IDGenText3" text="{saleSummary}"/>
+                                                    <Text id="_IDGenText4" text="{Quantity}"/>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </content>
+                            </Panel>
+                            <Panel id="_IDGenPanel2" expandable="true" headerText="Purchase Summary" width="auto" class="sapUiResponsiveMargin">
+                                <content>
+                                    <Table id="purchaseTable" items="{/PurchaseSummary}">
+                                        <columns>
+                                            <Column id="_IDGenColumn4">
+                                                <Text id="_IDGenText5" text="Purchase Summary"/>
+                                            </Column>
+                                            <Column id="_IDGenColumn5" hAlign="End">
+                                                <Text id="_IDGenText6" text="Rupees/Liter"/>
+                                            </Column>
+                                        </columns>
+
+                                        <items>
+                                            <ColumnListItem id="_IDGenColumnListItem3">
+                                                <cells>
+                                                    <Text id="_IDGenText7" text="{saleSummary}"/>
+                                                    <Text id="_IDGenText8" text="{Quantity}"/>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </content>
+                            </Panel>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
+        </semantic:content>
+
+        <semantic:sendEmailAction>
+            <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
+        </semantic:sendEmailAction>
+
+    </semantic:SemanticPage>
+
+</mvc:View>

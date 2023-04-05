@@ -1,0 +1,28 @@
+<core:FragmentDefinition xmlns="sap.ui.comp.valuehelpdialog"
+    xmlns:m="sap.m"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:core="sap.ui.core">
+    <ValueHelpDialog supportMultiselect="true" title="Product" ok=".onValueHelpOkPress" cancel=".onValueHelpCancelPress" supportRanges="false" key="Ebeln_Ebeln" descriptionKey="Ebeln_Ebeln">
+        <filterBar>
+            <fb:FilterBar advancedMode="true" search=".onFilterBarSearch" isRunningInValueHelpDialog="true">
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem groupName="__$INTERNAL$" name="Ebeln_Ebeln" label="RFQ" visibleInFilterBar="true">
+                        <fb:control>
+                            <m:Input name="Ebeln_Ebeln" />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem groupName="__$INTERNAL$" name="internalId" label="Internal Id" visibleInFilterBar="true" visible="false">
+                        <fb:control>
+                            <m:Input name="internalId" />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <fb:FilterGroupItem groupName="__$INTERNAL$" name="title" label="Title" visibleInFilterBar="true">
+                        <fb:control>
+                            <m:Input name="title" />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+        </filterBar>
+    </ValueHelpDialog>
+</core:FragmentDefinition>
