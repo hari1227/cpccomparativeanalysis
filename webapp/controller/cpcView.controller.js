@@ -24,10 +24,10 @@ sap.ui.define([
 
                 $.get({
                     url: "./comparative-analysis/RFQEventCompDetailsProj",
-                    success: function(resp) {
+                    success: function (resp) {
                         this.showComparativeTable(resp.value);
                     }.bind(this),
-                    error: function(error) {
+                    error: function (error) {
                         console.log(error);
                     }
                 });
@@ -85,6 +85,19 @@ sap.ui.define([
                     }
                 }
 
+                // Function to sort the vendors
+                function compare(curr, prev) {
+                    if (curr.eventID < prev.eventID) {
+                        return -1;
+                    }
+                    if (curr.eventID > prev.eventID) {
+                        return 1;
+                    }
+                    return 0;
+                }
+
+                vendorList.sort(compare);
+
                 //Get model unique Products
                 lookup = {};
                 var uniqueProducts = [];
@@ -99,17 +112,26 @@ sap.ui.define([
 
 
                 var finalData = { "ComparativeAnalysis": [] };
+                var skuPackingData = [];
+                var productData = {};
+                var productSKUData = {};
                 for (var i = 0; i < uniqueProducts.length; i++) {
                     var filteredData = rfqItems.filter(function (ca) {
                         return ca.itemTitle == uniqueProducts[i];
                     });
-                    var productData = {};
+                    productData = {};
                     productData.itemTitle = uniqueProducts[i];
+                    // For sku packing data - start
+                    productSKUData = {};
+                    productSKUData.PLAN = 1990;
+                    productSKUData.itemTitle = uniqueProducts[i];
                     for (var filData of filteredData) {
-                        productData[filData.vendorName] = filData.finalFGPrice;
+                        productData[filData.vendorName + filData.eventID] = filData.finalFGPrice;
+                        productSKUData[filData.vendorName + filData.eventID] = filData.finalFGPrice * productSKUData.PLAN
 
                     }
                     finalData.ComparativeAnalysis.push(productData);
+                    skuPackingData.push(productSKUData);
                 }
 
                 // Logic for the SKU clause fields
@@ -122,7 +144,7 @@ sap.ui.define([
                     productClauseObj.itemTitle = productClause[j].name;
                     for (var k in vendorList) {
                         if (vendorList[k].vendorName !== "itemTitle") {
-                            productClauseObj[vendorList[k].vendorName] = vendorList[k][productClause[j].id];
+                            productClauseObj[vendorList[k].vendorName + vendorList[k].eventID] = vendorList[k][productClause[j].id];
                         }
                     }
                     finalData.ComparativeAnalysis.push(productClauseObj);
@@ -136,7 +158,8 @@ sap.ui.define([
                     { id: "pmCost", name: "PM Cost" },
                     { id: "tollCharges", name: "Toll Charges" },
                     { id: "freightIns", name: "Freight & Ins." },
-                    { id: "otherExpenses", name: "Misc." }
+                    { id: "otherExpenses", name: "Misc." },
+                    { id: "cashDiscount", name: "Cash Discount in %" }
                 ];
                 var productCostObj;
                 for (var j in costFields) {
@@ -152,7 +175,7 @@ sap.ui.define([
                             //var recordswithMaxQuan = Math.max.apply(Math, filteredCostData.map(function(item) { return item.quantity; }));
                             var recordswithMaxQuan = filteredCostData.reduce((p, c) => p.quantity > c.quantity ? p : c);
 
-                            productCostObj[vendorList[k].vendorName] = recordswithMaxQuan[costFields[j].id]
+                            productCostObj[vendorList[k].vendorName + vendorList[k].eventID] = recordswithMaxQuan[costFields[j].id]
 
                         }
 
@@ -181,9 +204,15 @@ sap.ui.define([
                 };
 
                 var oCell = [];
+                var text;
                 for (i = 0; i < vendorList.length; i++) {
+                    if (i) {
+                        text = vendorList[i].vendorName + vendorList[i].eventID;
+                    } else {
+                        text = vendorList[i].vendorName;
+                    }
                     var cell1 = new sap.m.Text({
-                        text: "{" + vendorList[i].vendorName + "}"
+                        text: "{" + text + "}"
                     });
                     oCell.push(cell1);
                 }
@@ -194,6 +223,56 @@ sap.ui.define([
                 // console.log(data);
                 oTable.setModel(jsonModel);
                 oTable.bindItems("/ComparativeAnalysis", aColList);
+
+                // Code for the packaging
+                this.showPackingTable(skuPackingData, vendorList);
+            },
+
+            showPackingTable: function (skuPackingData, vendorList) {
+                // add plan here
+                vendorList.splice(1, 0, { "vendorName": 'PLAN' });
+                var oTable = this.getView().byId("packagingTable");
+                var columnName;
+                for (var j = 0; j < vendorList.length; j++) {
+                    if (j == 0) {
+                        columnName = "Particulars";
+                    } else {
+                        if (j == 1) {
+                            columnName = vendorList[j].vendorName;
+                        } else {
+                            columnName = vendorList[j].vendorName + "(" + vendorList[j].eventID + ")";
+                        }
+                    }
+                    var oColumn = new sap.m.Column({
+
+                        header: new sap.m.Label({
+                            text: columnName,
+                            wrapping: true
+                        })
+                    });
+                    oTable.addColumn(oColumn);
+                };
+
+                var oCell = [];
+                var text;
+                for (var i = 0; i < vendorList.length; i++) {
+                    if (i && i != 1) {
+                        text = vendorList[i].vendorName + vendorList[i].eventID;
+                    } else {
+                        text = vendorList[i].vendorName;
+                    }
+                    var cell1 = new sap.m.Text({
+                        text: "{" + text + "}"
+                    });
+                    oCell.push(cell1);
+                }
+                var aColList = new sap.m.ColumnListItem({
+                    cells: oCell
+                });
+                var packingModel = new JSONModel(skuPackingData);
+                // console.log(data);
+                oTable.setModel(packingModel);
+                oTable.bindItems("/", aColList);
             },
 
             // #region Value Help Dialog standard use case with filter bar without filter suggestions
@@ -297,7 +376,7 @@ sap.ui.define([
                 this.getView().byId("RFQEventFilterValueHelp").setTokens(aTokens);
                 this._oVHD.close();
             },
-    
+
             onValueHelpCancelPress: function () {
                 this._oVHD.close();
             }

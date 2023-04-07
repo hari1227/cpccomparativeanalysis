@@ -55,7 +55,8 @@
                 <IconTabBar id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
                     <items>
                         <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
-                             <smartTable:SmartTable id="_IDGenSmartTable1">
+                             <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
+                             <VBox >
                                 <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true">
                                     <headerToolbar>
                                         <OverflowToolbar id="_IDGenOverflowToolbar1">
@@ -70,7 +71,11 @@
                                     </headerToolbar>
                                     <!-- Our code in the controller goes here -->
                                 </Table>
-                            </smartTable:SmartTable>
+                            <!-- </smartTable:SmartTable> -->
+                            <Table id="packagingTable" class="sapUiLargeMarginTop" growing="true"  growingScrollToLoad="true" 
+                                        alternateRowColors="false" backgroundDesign="Transparent" >
+                                </Table>
+                                </VBox>
                         </IconTabFilter>
                         <IconTabFilter id="_IDGenIconTabFilter2" text="Sales/Purchase Summary" key="SS">
                             <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
