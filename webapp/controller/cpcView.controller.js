@@ -6,12 +6,13 @@ sap.ui.define([
     'sap/m/SearchField',
     'sap/ui/model/type/String',
     'sap/ui/table/Column',
-    'sap/m/Table'
+    'sap/m/Table',
+    "sap/ui/core/Fragment",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, Filter, FilterOperator, SearchField, TypeString, UIColumn, mTable) {
+    function (Controller, JSONModel, Filter, FilterOperator, SearchField, TypeString, UIColumn, mTable, Fragment) {
         "use strict";
 
         return Controller.extend("cpccomparativeanalysis.controller.cpcView", {
@@ -70,6 +71,9 @@ sap.ui.define([
             },
 
             showComparativeTable: function (rfqItems) {
+                //Data for NFA
+                var nfaRequiredData = [];
+
                 //Get Unique Vendors from the comparative Table
                 var lookup = {};
                 var items = rfqItems;//data.ComparativeAnalysis;
@@ -128,7 +132,7 @@ sap.ui.define([
                     // For sku packing data - start
                     productSKUData = {};
                     productSKUData.PLAN = 1990;
-                    productSKUTotal.PLAN = productSKUTotal.PLAN?productSKUTotal.PLAN + productSKUData.PLAN:productSKUData.PLAN; // for packing table
+                    productSKUTotal.PLAN = productSKUTotal.PLAN ? productSKUTotal.PLAN + productSKUData.PLAN : productSKUData.PLAN; // for packing table
                     productSKUData.itemTitle = uniqueProducts[i];
                     for (var filData of filteredData) {
                         productData[filData.vendorName + filData.eventID] = filData.finalFGPrice;
@@ -156,6 +160,7 @@ sap.ui.define([
                 var productClauseObj;
                 for (var j in productClause) {
                     productClauseObj = {};
+                    productClauseObj.itemId = productClause[j].id;
                     productClauseObj.itemTitle = productClause[j].name;
                     for (var k in vendorList) {
                         if (vendorList[k].vendorName !== "itemTitle") {
@@ -164,6 +169,9 @@ sap.ui.define([
                     }
                     finalData.ComparativeAnalysis.push(productClauseObj);
                     // productClausevendorList.itemTitle = productClause[j];
+                    if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
+                        nfaRequiredData.push(productClauseObj);
+                    }
 
                 }
 
@@ -177,10 +185,11 @@ sap.ui.define([
                     { id: "cashDiscount", name: "Cash Discount in %" }
                 ];
                 var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {};
-                productSKUAveragePriceCD.itemTitle = "Average Proce with CD";
+                productSKUAveragePriceCD.itemTitle = "Average Price with CD";
                 productTotalCost.itemTitle = "TOTAL-- Rs./Lt";
                 for (var j in costFields) {
                     productCostObj = {};
+                    productCostObj.itemId = costFields[j].id;
                     productCostObj.itemTitle = costFields[j].name;
                     for (var k in vendorList) {
                         if (vendorList[k].vendorName !== "itemTitle") {
@@ -210,6 +219,7 @@ sap.ui.define([
                     // productClausevendorList.itemTitle = productClause[j];
                     if (productCostObj.itemTitle == "Cash Discount in %") {
                         skuPackingData.push(productCostObj);
+                        nfaRequiredData.push(productCostObj);
                     }
 
                 }
@@ -411,6 +421,57 @@ sap.ui.define([
 
             onValueHelpCancelPress: function () {
                 this._oVHD.close();
+            },
+
+            // Value Help Request for the RFQ List
+            onRFQValueHelpRequest: function (oEvent) {
+                var sInputValue = oEvent.getSource().getValue(),
+                    oView = this.getView();
+
+                if (!this._pValueHelpDialog) {
+                    this._pValueHelpDialog = Fragment.load({
+                        id: oView.getId(),
+                        name: "cpccomparativeanalysis.view.RFQListValueHelp",
+                        controller: this
+                    }).then(function (oDialog) {
+                        oView.addDependent(oDialog);
+                        return oDialog;
+                    });
+                }
+                this._pValueHelpDialog.then(function (oDialog) {
+                    // Create a filter for the binding
+                    oDialog.getBinding("items").filter([new Filter("Ebeln", FilterOperator.Contains, sInputValue)]);
+                    // Open ValueHelpDialog filtered by the input's value
+                    oDialog.open(sInputValue);
+                });
+            },
+            onRFQValueHelpDialogSearch: function (oEvent) {
+                var sValue = oEvent.getParameter("value");
+                var oFilter = new Filter("Ebeln", FilterOperator.Contains, sValue);
+
+                oEvent.getSource().getBinding("items").filter([oFilter]);
+            },
+            onRFQValueHelpDialogClose: function (oEvent) {
+                var sDescription,
+                    oSelectedItem = oEvent.getParameter("selectedItem");
+                oEvent.getSource().getBinding("items").filter([]);
+
+                if (!oSelectedItem) {
+                    return;
+                }
+
+                sDescription = oSelectedItem.getDescription();
+
+                this.byId("rfqInput").setSelectedKey(sDescription);
+                //this.byId("selectedKeyIndicator").setText(sDescription);
+                this.getView().byId("RFQEventFilter").setVisible(true);
+            },
+
+            onSuggestionItemSelected: function (oEvent) {
+                var oItem = oEvent.getParameter("selectedItem");
+                var oText = oItem ? oItem.getKey() : "";
+                this.byId("selectedKeyIndicator").setText(oText);
+                
             }
 
         });

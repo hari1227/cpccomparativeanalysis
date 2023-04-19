@@ -4,9 +4,10 @@
     xmlns:filterbar = "sap.ui.comp.filterbar"
     xmlns:semantic="sap.f.semantic"
     xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
     xmlns:smartTable="sap.ui.comp.smarttable">
 
-    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false">
+    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
 
         <semantic:titleHeading>
             <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
@@ -19,9 +20,24 @@
                     <filterbar:filterGroupItems>
                         <filterbar:FilterGroupItem id="_IDGenFilterGroupItem1" groupName="RFQFilter" label="RFQ" name="Ebeln" partOfCurrentVariant="true" visibleInFilterBar="true">
                             <filterbar:control>
-                                <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
+                                <!-- <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
                                     <core:Item id="RFQFilterItems" key="{Ebeln}" text="{Ebeln}"/>
-                                </ComboBox>
+                                </ComboBox> -->
+                                <Input
+                                    id="rfqInput"
+                                    textFormatMode="KeyValue"
+                                    placeholder="Enter RFQ"
+                                    showSuggestion="true"
+                                    showValueHelp="true"
+                                    valueHelpRequest=".onRFQValueHelpRequest"
+                                    suggestionItems="{/RFQList}"
+                                    suggestionItemSelected=".onSuggestionItemSelected">
+                                    <suggestionItems>
+                                        <core:ListItem
+                                            key="{Ebeln}"
+                                            text="{Ebeln}" />
+                                    </suggestionItems>
+                                </Input>
                             </filterbar:control>
                         </filterbar:FilterGroupItem>
                         <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
@@ -125,6 +141,56 @@
                                 </content>
                             </Panel>
                         </IconTabFilter>
+                        <IconTabFilter text="NFA Template">
+                        <form:SimpleForm
+			editable="true"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="4"
+			labelSpanM="12"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="0"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="2"
+			columnsM="1"
+			singleContainerFullSize="false" >
+			<form:content>
+            <core:Title/>
+				<Label text="Recommended Vendor" class="sapUiTinyMarginTop"/>
+				<Input value = "" />	
+				<Label text="GST" />
+				<Input value = ""/>
+				<Label text="Credit Period" />
+                <Input value = ""/>
+                
+                <Label text="Cash Discount" />
+				<Input value = ""/>
+				<Label text="Delivery" class="sapUiTinyMarginBegin"/>
+                <Input value = ""/>
+                <Label text="Quantity" />
+				<Input value = ""/>
+                <core:Title/>
+                <Label text="Payment Plan" />
+				<Input value = ""/>
+                <Label text="Packing/Quality" />
+				<Input value = ""/>
+                <Label text="Product Testing" />
+				<Input value = ""/>
+                <Label text="Other Standard Terms" />
+				<TextArea />
+                
+				 
+			</form:content>
+		</form:SimpleForm>
+                            <VBox >
+                                <Text text="Manual Enter" class="sapUiTinyMarginTop"/>
+		                        <TextArea id="comment" showExceededText="true" maxLength="40" width="100%"  valueLiveUpdate="false" liveChange="handleLiveChange" />
+                            </VBox>
+                        </IconTabFilter>
                     </items>
                 </IconTabBar>
             </VBox>
@@ -133,7 +199,9 @@
         <semantic:sendEmailAction>
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
-
+        <semantic:footerCustomActions>
+            <Button text="Print"/>
+        </semantic:footerCustomActions>
     </semantic:SemanticPage>
 
 </mvc:View>
