@@ -22,11 +22,21 @@ sap.ui.define([
                 //         this.showComparativeTable(resp.results);
                 //     }.bind(this)
                 // });
-
                 $.get({
-                    url: "./comparative-analysis/RFQEventCompDetailsProj",
+                    url: "./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
-                        this.showComparativeTable(resp.value);
+                        this.rfqItemsWithoutSum = resp.value;
+                        // Backend call to get all the items sumed at vendor, event and sku level
+                        $.get({
+                            url: "./comparative-analysis/RFQEventCompDetailsProj",
+                            success: function (resp) {
+                                this.showComparativeTable(resp.value);
+                            }.bind(this),
+                            error: function (error) {
+                                console.log(error);
+                            }
+                        });
+
                     }.bind(this),
                     error: function (error) {
                         console.log(error);
@@ -131,11 +141,16 @@ sap.ui.define([
                     productData.itemTitle = uniqueProducts[i];
                     // For sku packing data - start
                     productSKUData = {};
-                    productSKUData.PLAN = 1990;
+                    // PLAN = Sum of all the quantity of the unique product
+                    productSKUData.PLAN = filteredData.reduce(function (accumulator, object) {
+                        return accumulator + object.quantity;
+                    }, 0);
                     productSKUTotal.PLAN = productSKUTotal.PLAN ? productSKUTotal.PLAN + productSKUData.PLAN : productSKUData.PLAN; // for packing table
                     productSKUData.itemTitle = uniqueProducts[i];
+                    // For sku packing data - end
                     for (var filData of filteredData) {
                         productData[filData.vendorName + filData.eventID] = filData.finalFGPrice;
+                        //Code for Packing table - start 
                         productSKUData[filData.vendorName + filData.eventID] = filData.finalFGPrice * productSKUData.PLAN
                         if (productSKUTotal[filData.vendorName + filData.eventID]) {
                             productSKUTotal[filData.vendorName + filData.eventID] = productSKUTotal[filData.vendorName + filData.eventID] + productSKUData[filData.vendorName + filData.eventID];
@@ -143,6 +158,7 @@ sap.ui.define([
                             productSKUTotal[filData.vendorName + filData.eventID] = productSKUData[filData.vendorName + filData.eventID];
                         }
                         productSKUAverage[filData.vendorName + filData.eventID] = productSKUTotal[filData.vendorName + filData.eventID] / productSKUTotal.PLAN;
+                        //Code for Packing table - end
                     }
                     finalData.ComparativeAnalysis.push(productData);
                     skuPackingData.push(productSKUData);
@@ -194,7 +210,7 @@ sap.ui.define([
                     for (var k in vendorList) {
                         if (vendorList[k].vendorName !== "itemTitle") {
                             //productClauseObj[vendorList[k].vendorName] = vendorList[k][productClause[j].id];
-                            var filteredCostData = rfqItems.filter(function (ca) {
+                            var filteredCostData = this.rfqItemsWithoutSum.filter(function (ca) {
                                 return ca.vendorMailId == vendorList[k].vendorMailId;
                             });
                             //Math.max(...filteredCostData.map(item => item.quantity))
@@ -471,7 +487,7 @@ sap.ui.define([
                 var oItem = oEvent.getParameter("selectedItem");
                 var oText = oItem ? oItem.getKey() : "";
                 this.byId("selectedKeyIndicator").setText(oText);
-                
+
             }
 
         });
