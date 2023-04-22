@@ -2,7 +2,7 @@
     xmlns:m="sap.m"
     xmlns:fb="sap.ui.comp.filterbar"
     xmlns:core="sap.ui.core">
-    <ValueHelpDialog supportMultiselect="true" title="Product" ok=".onValueHelpOkPress" cancel=".onValueHelpCancelPress" supportRanges="false" key="Ebeln_Ebeln" descriptionKey="Ebeln_Ebeln">
+    <ValueHelpDialog supportMultiselect="true" title="Product" ok=".onValueHelpOkPress" cancel=".onValueHelpCancelPress" supportRanges="false" key="internalId" descriptionKey="Ebeln_Ebeln">
         <filterBar>
             <fb:FilterBar advancedMode="true" search=".onFilterBarSearch" isRunningInValueHelpDialog="true">
                 <fb:filterGroupItems>

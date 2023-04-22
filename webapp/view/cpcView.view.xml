@@ -16,7 +16,7 @@
         <semantic:content>
 
             <VBox id="contentLayout">
-                <filterbar:FilterBar id="RFQFilter">
+                <filterbar:FilterBar id="RFQFilter" search="onItemsFiltered">
                     <filterbar:filterGroupItems>
                         <filterbar:FilterGroupItem id="_IDGenFilterGroupItem1" groupName="RFQFilter" label="RFQ" name="Ebeln" partOfCurrentVariant="true" visibleInFilterBar="true">
                             <filterbar:control>

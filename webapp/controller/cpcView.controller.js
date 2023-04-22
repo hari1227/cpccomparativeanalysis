@@ -22,6 +22,9 @@ sap.ui.define([
                 //         this.showComparativeTable(resp.results);
                 //     }.bind(this)
                 // });
+
+                this.selectedEvents = ["Doc648087602","Doc652480915"];
+                //Filters to be passed based on the selectedEvents
                 $.get({
                     url: "./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
@@ -124,7 +127,7 @@ sap.ui.define([
                     }
                 }
 
-
+                var self = this;
                 var finalData = { "ComparativeAnalysis": [] };
                 var skuPackingData = [];
                 var productData = {};
@@ -141,9 +144,14 @@ sap.ui.define([
                     productData.itemTitle = uniqueProducts[i];
                     // For sku packing data - start
                     productSKUData = {};
-                    // PLAN = Sum of all the quantity of the unique product
-                    productSKUData.PLAN = filteredData.reduce(function (accumulator, object) {
-                        return accumulator + object.quantity;
+                    // PLAN = Sum of all the quantity of the unique product -> no used after discussion
+                    //PLAN = Sum of all the quantity for each SKU based on the one vendor bid
+                    productSKUData.PLAN = filteredData.filter(function(obj) {
+                        return vendorList[1].vendorMailId == obj.vendorMailId && self.selectedEvents[0] == obj.eventID;
+                    } ).reduce(function (accumulator, object) {
+                       // if(vendorList[1].vendorMailId == object.vendorMailId && self.selectedEvents[0] == object.eventID) {
+                            return accumulator + object.quantity;
+                       // }
                     }, 0);
                     productSKUTotal.PLAN = productSKUTotal.PLAN ? productSKUTotal.PLAN + productSKUData.PLAN : productSKUData.PLAN; // for packing table
                     productSKUData.itemTitle = uniqueProducts[i];
@@ -168,29 +176,7 @@ sap.ui.define([
                 skuPackingData.push(productSKUAverage);
                 //delete productSKUTotal;
                 //delete productSKUAverage;
-
-                // Logic for the SKU clause fields
-                var productClause = [{ id: "shelfLife", name: "Shelf Life" },
-                { id: "gstInput", name: "GST Input" },
-                { id: "creditDays", name: "Credit Days" }];
-                var productClauseObj;
-                for (var j in productClause) {
-                    productClauseObj = {};
-                    productClauseObj.itemId = productClause[j].id;
-                    productClauseObj.itemTitle = productClause[j].name;
-                    for (var k in vendorList) {
-                        if (vendorList[k].vendorName !== "itemTitle") {
-                            productClauseObj[vendorList[k].vendorName + vendorList[k].eventID] = vendorList[k][productClause[j].id];
-                        }
-                    }
-                    finalData.ComparativeAnalysis.push(productClauseObj);
-                    // productClausevendorList.itemTitle = productClause[j];
-                    if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
-                        nfaRequiredData.push(productClauseObj);
-                    }
-
-                }
-
+                
                 // Different Prices with Highes SKU quantity
                 var costFields = [
                     { id: "bulkCost", name: "Bulk Cost" },
@@ -200,9 +186,10 @@ sap.ui.define([
                     { id: "otherExpenses", name: "Misc." },
                     { id: "cashDiscount", name: "Cash Discount in %" }
                 ];
-                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {};
+                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {}, cashDiscountData;
                 productSKUAveragePriceCD.itemTitle = "Average Price with CD";
                 productTotalCost.itemTitle = "TOTAL-- Rs./Lt";
+                
                 for (var j in costFields) {
                     productCostObj = {};
                     productCostObj.itemId = costFields[j].id;
@@ -236,13 +223,52 @@ sap.ui.define([
                     if (productCostObj.itemTitle == "Cash Discount in %") {
                         skuPackingData.push(productCostObj);
                         nfaRequiredData.push(productCostObj);
+                        cashDiscountData = productCostObj;
                     }
 
                 }
                 skuPackingData.push(productSKUAveragePriceCD);
                 //console.log(productSKUAveragePriceCD);
-                finalData.ComparativeAnalysis.push(productTotalCost);
+                finalData.ComparativeAnalysis.splice((finalData.ComparativeAnalysis.length-1), 0, productTotalCost);
 
+                // Logic for the SKU clause fields
+                var productClause = [{ id: "shelfLife", name: "Shelf Life" },
+                { id: "gstInput", name: "GST Input" },
+                { id: "creditDays", name: "Credit Days" }];
+                var productClauseObj;
+                var productCashPrice={};
+                productCashPrice.itemTitle = "Cash Price of FG";
+                for (var j in productClause) {
+                    productClauseObj = {};
+                    productClauseObj.itemId = productClause[j].id;
+                    productClauseObj.itemTitle = productClause[j].name;
+                    for (var k in vendorList) {
+                        if (vendorList[k].vendorName !== "itemTitle") {
+                            productClauseObj[vendorList[k].vendorName + vendorList[k].eventID] = vendorList[k][productClause[j].id];
+                        }
+                        // Calculate the cost price in FG
+                        productCashPrice[vendorList[k].vendorName + vendorList[k].eventID] = productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] - (productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] * cashDiscountData[vendorList[k].vendorName + vendorList[k].eventID] / 100);
+                        //productTotalCost;
+                    }
+                    if (productClause[j].id === "shelfLife") {
+                        finalData.ComparativeAnalysis.unshift(productClauseObj);
+                    } else {
+                        if(productClause[j].id === "creditDays") {
+                            finalData.ComparativeAnalysis.splice((finalData.ComparativeAnalysis.length-2), 0,productClauseObj);
+                        } else {
+                        finalData.ComparativeAnalysis.push(productClauseObj);
+                        }
+                    }
+                    // productClausevendorList.itemTitle = productClause[j];
+                    if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
+                        nfaRequiredData.push(productClauseObj);
+                    }
+
+                }
+                finalData.ComparativeAnalysis.push(productCashPrice);
+
+                
+                // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("comparativeTable");
                 var columnName;
                 for (var j = 0; j < vendorList.length; j++) {
@@ -488,6 +514,11 @@ sap.ui.define([
                 var oText = oItem ? oItem.getKey() : "";
                 this.byId("selectedKeyIndicator").setText(oText);
 
+            },
+
+            // Function triggers after change of filters
+            onItemsFiltered: function(oEvent) {
+                this.selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
             }
 
         });
