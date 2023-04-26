@@ -129,7 +129,7 @@ sap.ui.define([
                     }
                 }
                 //console.log(nfaPricingFinalData);
-                this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
+                //this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
                 this.generateNFAMultiVendorTable(nfaPricingFinalData, uniqueColumnData);
             },
 
