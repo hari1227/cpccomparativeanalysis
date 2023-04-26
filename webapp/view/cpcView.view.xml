@@ -5,7 +5,8 @@
     xmlns:semantic="sap.f.semantic"
     xmlns:core="sap.ui.core"
     xmlns:form="sap.ui.layout.form"
-    xmlns:smartTable="sap.ui.comp.smarttable">
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:ui="sap.ui.table">
 
     <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
 
@@ -23,26 +24,16 @@
                                 <!-- <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
                                     <core:Item id="RFQFilterItems" key="{Ebeln}" text="{Ebeln}"/>
                                 </ComboBox> -->
-                                <Input
-                                    id="rfqInput"
-                                    textFormatMode="KeyValue"
-                                    placeholder="Enter RFQ"
-                                    showSuggestion="true"
-                                    showValueHelp="true"
-                                    valueHelpRequest=".onRFQValueHelpRequest"
-                                    suggestionItems="{/RFQList}"
-                                    suggestionItemSelected=".onSuggestionItemSelected">
+                                <Input id="rfqInput" textFormatMode="KeyValue" placeholder="Enter RFQ" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onRFQValueHelpRequest" suggestionItems="{/RFQList}" suggestionItemSelected=".onSuggestionItemSelected">
                                     <suggestionItems>
-                                        <core:ListItem
-                                            key="{Ebeln}"
-                                            text="{Ebeln}" />
+                                        <core:ListItem key="{Ebeln}" text="{Ebeln}" />
                                     </suggestionItems>
                                 </Input>
                             </filterbar:control>
                         </filterbar:FilterGroupItem>
                         <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
                             <filterbar:control>
-                                  <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested">
+                                <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested">
                                     <suggestionColumns>
                                         <Column>
                                             <Label text="RFQ"/>
@@ -61,8 +52,8 @@
                                             <Label text="{title}" />
                                         </ColumnListItem>
                                     </suggestionRows>
-                                </MultiInput> 
-                                
+                                </MultiInput>
+
                             </filterbar:control>
                         </filterbar:FilterGroupItem>
                     </filterbar:filterGroupItems>
@@ -71,8 +62,8 @@
                 <IconTabBar id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
                     <items>
                         <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
-                             <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
-                             <VBox >
+                            <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
+                            <VBox >
                                 <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true">
                                     <headerToolbar>
                                         <OverflowToolbar id="_IDGenOverflowToolbar1">
@@ -87,11 +78,10 @@
                                     </headerToolbar>
                                     <!-- Our code in the controller goes here -->
                                 </Table>
-                            <!-- </smartTable:SmartTable> -->
-                            <Table id="packagingTable" class="sapUiLargeMarginTop" growing="true"  growingScrollToLoad="true" 
-                                        alternateRowColors="false" backgroundDesign="Transparent" >
+                                <!-- </smartTable:SmartTable> -->
+                                <Table id="packagingTable" class="sapUiLargeMarginTop" growing="true" growingScrollToLoad="true" alternateRowColors="false" backgroundDesign="Transparent">
                                 </Table>
-                                </VBox>
+                            </VBox>
                         </IconTabFilter>
                         <IconTabFilter id="_IDGenIconTabFilter2" text="Sales/Purchase Summary" key="SS">
                             <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
@@ -142,53 +132,42 @@
                             </Panel>
                         </IconTabFilter>
                         <IconTabFilter text="NFA Template">
-                        <form:SimpleForm
-			editable="true"
-			layout="ResponsiveGridLayout"
-			labelSpanXL="4"
-			labelSpanL="4"
-			labelSpanM="12"
-			labelSpanS="12"
-			adjustLabelSpan="false"
-			emptySpanXL="0"
-			emptySpanL="0"
-			emptySpanM="0"
-			emptySpanS="0"
-			columnsXL="2"
-			columnsL="2"
-			columnsM="1"
-			singleContainerFullSize="false" >
-			<form:content>
-            <core:Title/>
-				<Label text="Recommended Vendor" class="sapUiTinyMarginTop"/>
-				<Input value = "" />	
-				<Label text="GST" />
-				<Input value = ""/>
-				<Label text="Credit Period" />
-                <Input value = ""/>
-                
-                <Label text="Cash Discount" />
-				<Input value = ""/>
-				<Label text="Delivery" class="sapUiTinyMarginBegin"/>
-                <Input value = ""/>
-                <Label text="Quantity" />
-				<Input value = ""/>
-                <core:Title/>
-                <Label text="Payment Plan" />
-				<Input value = ""/>
-                <Label text="Packing/Quality" />
-				<Input value = ""/>
-                <Label text="Product Testing" />
-				<Input value = ""/>
-                <Label text="Other Standard Terms" />
-				<TextArea />
-                
-				 
-			</form:content>
-		</form:SimpleForm>
+                            <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+                                <form:content>
+                                    <core:Title/>
+                                    <Label text="Recommended Vendor" class="sapUiTinyMarginTop"/>
+                                    <Input value = "" />
+                                    <Label text="GST" />
+                                    <Input value = ""/>
+                                    <Label text="Credit Period" />
+                                    <Input value = ""/>
+
+                                    <Label text="Cash Discount" />
+                                    <Input value = ""/>
+                                    <Label text="Delivery" class="sapUiTinyMarginBegin"/>
+                                    <Input value = ""/>
+                                    <Label text="Quantity" />
+                                    <Input value = ""/>
+                                    <core:Title/>
+                                    <Label text="Payment Plan" />
+                                    <Input value = ""/>
+                                    <Label text="Packing/Quality" />
+                                    <Input value = ""/>
+                                    <Label text="Product Testing" />
+                                    <Input value = ""/>
+                                    <Label text="Other Standard Terms" />
+                                    <TextArea />
+
+
+                                </form:content>
+                            </form:SimpleForm>
                             <VBox >
                                 <Text text="Manual Enter" class="sapUiTinyMarginTop"/>
-		                        <TextArea id="comment" showExceededText="true" maxLength="40" width="100%"  valueLiveUpdate="false" liveChange="handleLiveChange" />
+                                <TextArea id="comment" showExceededText="true" maxLength="40" width="100%" valueLiveUpdate="false" liveChange="handleLiveChange" />
+                            </VBox>
+                            <VBox>
+                                <Text text="Multi Vendor Split" class="sapUiTinyMarginTop"/>
+                                <ui:Table id="nfaMultiVendorTable"/>
                             </VBox>
                         </IconTabFilter>
                     </items>
