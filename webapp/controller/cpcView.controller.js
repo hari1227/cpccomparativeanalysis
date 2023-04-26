@@ -385,6 +385,30 @@ sap.ui.define([
 
                 }
                 finalData.ComparativeAnalysis.push(productCashPrice);
+
+                //#region - Temp fix for currency format
+                const domesticFields =  [
+                    "bulkCost",
+                    "tollCharges",
+                    "freightIns",
+                    "pmCost",
+                    "otherExpenses",
+                    "cashDiscount",
+                  ];
+                const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
+                finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
+                    if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
+                        return Object.keys(eachCaData).reduce((acc, eachKey)=> {
+                                return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                       style: "currency",
+                                       currency: "INR",
+                                       }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
+                        }, {})
+                        }
+                    return eachCaData;
+                })
+                //#endregion - Temp fix for currency format
+
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
 
                 // Create a Table for ComparativeAnalysis
@@ -433,6 +457,22 @@ sap.ui.define([
 
             // Function to display the packing table
             showPackingTable: function (skuPackingData, vendorList) {
+
+                //#region - temp fix for currency format
+                const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
+                skuPackingData = skuPackingData.map(eachPdData => {
+                    if(domesticCurFields.includes(eachPdData.itemTitle)) {
+                        return Object.keys(eachPdData).reduce((acc, key)=> {
+                                return {...acc, [key]: key.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                       style: "currency",
+                                       currency: "INR",
+                                       }).format(eachPdData[key]) : eachPdData[key]}
+                        }, {})
+                        }
+                    return eachPdData;
+                })
+                //#endregion - temp fix for currency format
+
                 this.nfapackingTable = skuPackingData; // for NFA print
                 // add plan here
                 vendorList.splice(1, 0, { "vendorName": 'PLAN' });
