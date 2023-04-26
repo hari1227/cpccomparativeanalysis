@@ -179,7 +179,7 @@
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
-            <Button text="Print"/>
+            <Button text="Print" press="onNFAPrint"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>
 

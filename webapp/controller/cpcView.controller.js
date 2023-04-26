@@ -48,13 +48,17 @@ sap.ui.define([
                 });
                 this.getNFAPricingTableData();
                 this.addSalesSummary();
+
+                var nfaModel = new JSONModel();
+                this.getView().setModel(nfaModel, "nfaModel");
+                this.nfaData = {
+                };
             },
 
             getNFAPricingTableData: function () {
                 //Get NFA relavent Data
                 //Fetch Awarded scenarios
-                var nfaPricingTable = new JSONModel();
-                this.getView().setModel(nfaPricingTable, "nfaPricingTable");
+
                 var settings = {
                     async: true,
                     url: "./comparative-analysis/CPCAwardedScenarios",
@@ -130,6 +134,7 @@ sap.ui.define([
             },
 
             generateNFAMultiVendorTable: function (nfaPricingData, uniqueColumnData) {
+                this.nfaMultiVendorPrice = nfaPricingData;
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("nfaMultiVendorTable");
                 var columnName, lookup = {};
@@ -380,7 +385,7 @@ sap.ui.define([
 
                 }
                 finalData.ComparativeAnalysis.push(productCashPrice);
-
+                this.nfaVersionForCS = finalData.ComparativeAnalysis;
 
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("comparativeTable");
@@ -428,6 +433,7 @@ sap.ui.define([
 
             // Function to display the packing table
             showPackingTable: function (skuPackingData, vendorList) {
+                this.nfapackingTable = skuPackingData; // for NFA print
                 // add plan here
                 vendorList.splice(1, 0, { "vendorName": 'PLAN' });
                 var oTable = this.getView().byId("packagingTable");
@@ -634,6 +640,12 @@ sap.ui.define([
             // Function triggers after change of filters
             onItemsFiltered: function (oEvent) {
                 this.selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
+            },
+
+            onNFAPrint: function () {
+                this.nfaVersionForCS; // This is for the CS data
+                this.nfapackingTable; // This is for the packing table
+                this.nfaMultiVendorPrice; // This is for the Table ( Only in case of multiple vendor Split) (CPC)
             }
 
         });
