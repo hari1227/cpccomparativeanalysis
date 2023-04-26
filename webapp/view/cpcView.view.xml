@@ -167,7 +167,7 @@
                             </VBox>
                             <VBox>
                                 <Text text="Multi Vendor Split" class="sapUiTinyMarginTop"/>
-                                <ui:Table id="nfaMultiVendorTable"/>
+                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None"/>
                             </VBox>
                         </IconTabFilter>
                     </items>

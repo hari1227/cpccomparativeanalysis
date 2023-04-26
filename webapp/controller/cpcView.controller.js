@@ -53,6 +53,34 @@ sap.ui.define([
                 this.getView().setModel(nfaModel, "nfaModel");
                 this.nfaData = {
                 };
+
+                this.readNFAData();
+            },
+
+            readNFAData: function() {
+
+                var data={
+                    "rfqNumber" : "7000000026",
+                    "eventId" : "Doc652480915", 
+                }
+                // var token = this.fetchToken();
+                var settings = {
+                    async: true,
+                    url: "/comparative-analysis/getcpcNfaDetails",
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    processData: false,
+                    data: JSON.stringify(data)
+                };
+               // this.getView().setBusy(true);
+               $.ajax(settings)
+                .done(function (response) {
+                }).fail(function() {
+
+                });
+
             },
 
             getNFAPricingTableData: function () {
@@ -77,7 +105,7 @@ sap.ui.define([
                         MessageBox.error("error:" + error.message);
                     });
             },
-
+            // Calculate multi vendor pricing table columns and rows 
             showNFAPricingTable: function (nfaPricingData) {
                 var filteredNFAData;
                 var nfaPricingObj = {}, nfaPricingFinalData = [];
@@ -102,8 +130,8 @@ sap.ui.define([
                     nfaPricingObj = {};
                     for (var nfaData of filteredNFAData) {
                         nfaPricingObj.Vendor = nfaData.vendorName;
-                        nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaData.quantity;
-                        nfaPricingObj[nfaData.SKUName + "-Price"] = nfaData.price;
+                        nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaPricingObj[nfaData.SKUName + "-Quantity"]? nfaPricingObj[nfaData.SKUName + "-Quantity"] + nfaData.quantity: nfaData.quantity;
+                        nfaPricingObj[nfaData.SKUName + "-Price"] = nfaPricingObj[nfaData.SKUName + "-Price"]? nfaPricingObj[nfaData.SKUName + "-Price"] + nfaData.price: nfaData.price;
                         columnData.push({ columnName: nfaData.SKUName + "-Quantity" }, { columnName: nfaData.SKUName + "-Price" });
                     }
                     nfaPricingFinalData.push(nfaPricingObj);
@@ -129,10 +157,11 @@ sap.ui.define([
                     }
                 }
                 //console.log(nfaPricingFinalData);
-                this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
+                //this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
                 this.generateNFAMultiVendorTable(nfaPricingFinalData, uniqueColumnData);
             },
 
+            // Create and bind multi vendor table in NFA template
             generateNFAMultiVendorTable: function (nfaPricingData, uniqueColumnData) {
                 this.nfaMultiVendorPrice = nfaPricingData;
                 // Create a Table for ComparativeAnalysis
@@ -201,6 +230,7 @@ sap.ui.define([
                 oSalesTable.setModel(purModel);
             },
 
+            // Calculate different data set for CS and bind to the CS table 
             showComparativeTable: function (rfqItems) {
                 //Data for NFA
                 var nfaRequiredData = [];
