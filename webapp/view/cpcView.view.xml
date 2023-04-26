@@ -168,13 +168,8 @@
                                 </rte:RichTextEditor>
                             </VBox>
                             <VBox>
-<<<<<<< HEAD
-                                <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <ui:Table id="nfaMultiVendorTable"/>
-=======
                                 <Text text="Multi Vendor Split" class="sapUiTinyMarginTop"/>
                                 <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None"/>
->>>>>>> a29ea017f54acf46fa71956f7aaebc71c7b20402
                             </VBox>
                             <VBox >
                                 <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>

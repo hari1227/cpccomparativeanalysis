@@ -417,13 +417,12 @@ sap.ui.define([
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
-                const domesticFields =  [
+               /* const domesticFields =  [
                     "bulkCost",
                     "tollCharges",
                     "freightIns",
                     "pmCost",
-                    "otherExpenses",
-                    "cashDiscount",
+                    "otherExpenses"
                   ];
                 const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
                 finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
@@ -436,7 +435,7 @@ sap.ui.define([
                         }, {})
                         }
                     return eachCaData;
-                })
+                })  */
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
@@ -489,7 +488,7 @@ sap.ui.define([
             showPackingTable: function (skuPackingData, vendorList) {
 
                 //#region - temp fix for currency format
-                const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
+              /*  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
                 skuPackingData = skuPackingData.map(eachPdData => {
                     if(domesticCurFields.includes(eachPdData.itemTitle)) {
                         return Object.keys(eachPdData).reduce((acc, key)=> {
@@ -500,7 +499,7 @@ sap.ui.define([
                         }, {})
                         }
                     return eachPdData;
-                })
+                }) */
                 //#endregion - temp fix for currency format
 
                 this.nfapackingTable = skuPackingData; // for NFA print
