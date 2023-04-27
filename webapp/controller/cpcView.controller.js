@@ -445,25 +445,25 @@ sap.ui.define([
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
-                 const domesticFields =  [
-                     "bulkCost",
-                     "tollCharges",
-                     "freightIns",
-                     "pmCost",
-                     "otherExpenses"
-                   ];
-                 const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
-                 finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
-                     if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
-                         return Object.keys(eachCaData).reduce((acc, eachKey)=> {
-                                 return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
-                                        style: "currency",
-                                        currency: "INR",
-                                        }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
-                         }, {})
-                         }
-                     return eachCaData;
-                 })  
+                const domesticFields =  [
+                    "bulkCost",
+                    "tollCharges",
+                    "freightIns",
+                    "pmCost",
+                    "otherExpenses",
+                  ];
+                const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
+                finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
+                    if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
+                        return Object.keys(eachCaData).reduce((acc, eachKey)=> {
+                                return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                       style: "currency",
+                                       currency: "INR",
+                                       }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
+                        }, {})
+                        }
+                    return eachCaData;
+                })
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
