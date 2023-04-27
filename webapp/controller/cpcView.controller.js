@@ -66,7 +66,7 @@ sap.ui.define([
                 // var token = this.fetchToken();
                 var settings = {
                     async: true,
-                    url: "/comparative-analysis/getcpcNfaDetails",
+                    url: "./comparative-analysis/getcpcNfaDetails",
                     method: "POST",
                     headers: {
                         "content-type": "application/json"
