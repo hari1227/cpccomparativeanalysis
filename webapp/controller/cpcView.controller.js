@@ -51,17 +51,17 @@ sap.ui.define([
 
                 var nfaModel = new JSONModel();
                 this.getView().setModel(nfaModel, "nfaModel");
-                this.nfaData = {
-                };
+                // this.nfaData = {
+                // };
 
                 this.readNFAData();
             },
 
-            readNFAData: function() {
+            readNFAData: function () {
 
-                var data={
-                    "rfqNumber" : "7000000026",
-                    "eventId" : "Doc652480915", 
+                var data = {
+                    "rfqNumber": "7000000026",
+                    "eventId": "Doc652480915",
                 }
                 // var token = this.fetchToken();
                 var settings = {
@@ -74,12 +74,13 @@ sap.ui.define([
                     processData: false,
                     data: JSON.stringify(data)
                 };
-               // this.getView().setBusy(true);
-               $.ajax(settings)
-                .done(function (response) {
-                }).fail(function() {
+                // this.getView().setBusy(true);
+                $.ajax(settings)
+                    .done(function (response) {
+                        this.getView().getModel("nfaModel").setProperty("/", response.value[0]);
+                    }.bind(this)).fail(function () {
 
-                });
+                    });
 
             },
 
@@ -130,8 +131,8 @@ sap.ui.define([
                     nfaPricingObj = {};
                     for (var nfaData of filteredNFAData) {
                         nfaPricingObj.Vendor = nfaData.vendorName;
-                        nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaPricingObj[nfaData.SKUName + "-Quantity"]? nfaPricingObj[nfaData.SKUName + "-Quantity"] + nfaData.quantity: nfaData.quantity;
-                        nfaPricingObj[nfaData.SKUName + "-Price"] = nfaPricingObj[nfaData.SKUName + "-Price"]? nfaPricingObj[nfaData.SKUName + "-Price"] + nfaData.price: nfaData.price;
+                        nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaPricingObj[nfaData.SKUName + "-Quantity"] ? nfaPricingObj[nfaData.SKUName + "-Quantity"] + nfaData.quantity : nfaData.quantity;
+                        nfaPricingObj[nfaData.SKUName + "-Price"] = nfaPricingObj[nfaData.SKUName + "-Price"] ? nfaPricingObj[nfaData.SKUName + "-Price"] + nfaData.price : nfaData.price;
                         columnData.push({ columnName: nfaData.SKUName + "-Quantity" }, { columnName: nfaData.SKUName + "-Price" });
                     }
                     nfaPricingFinalData.push(nfaPricingObj);
@@ -417,25 +418,25 @@ sap.ui.define([
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
-               /* const domesticFields =  [
-                    "bulkCost",
-                    "tollCharges",
-                    "freightIns",
-                    "pmCost",
-                    "otherExpenses"
-                  ];
-                const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
-                finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
-                    if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
-                        return Object.keys(eachCaData).reduce((acc, eachKey)=> {
-                                return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
-                                       style: "currency",
-                                       currency: "INR",
-                                       }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
-                        }, {})
-                        }
-                    return eachCaData;
-                })  */
+                /* const domesticFields =  [
+                     "bulkCost",
+                     "tollCharges",
+                     "freightIns",
+                     "pmCost",
+                     "otherExpenses"
+                   ];
+                 const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
+                 finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
+                     if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
+                         return Object.keys(eachCaData).reduce((acc, eachKey)=> {
+                                 return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                        style: "currency",
+                                        currency: "INR",
+                                        }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
+                         }, {})
+                         }
+                     return eachCaData;
+                 })  */
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
@@ -488,18 +489,18 @@ sap.ui.define([
             showPackingTable: function (skuPackingData, vendorList) {
 
                 //#region - temp fix for currency format
-              /*  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
-                skuPackingData = skuPackingData.map(eachPdData => {
-                    if(domesticCurFields.includes(eachPdData.itemTitle)) {
-                        return Object.keys(eachPdData).reduce((acc, key)=> {
-                                return {...acc, [key]: key.includes("Doc") ? new Intl.NumberFormat("en-IN", {
-                                       style: "currency",
-                                       currency: "INR",
-                                       }).format(eachPdData[key]) : eachPdData[key]}
-                        }, {})
-                        }
-                    return eachPdData;
-                }) */
+                /*  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
+                  skuPackingData = skuPackingData.map(eachPdData => {
+                      if(domesticCurFields.includes(eachPdData.itemTitle)) {
+                          return Object.keys(eachPdData).reduce((acc, key)=> {
+                                  return {...acc, [key]: key.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                         style: "currency",
+                                         currency: "INR",
+                                         }).format(eachPdData[key]) : eachPdData[key]}
+                          }, {})
+                          }
+                      return eachPdData;
+                  }) */
                 //#endregion - temp fix for currency format
 
                 this.nfapackingTable = skuPackingData; // for NFA print
@@ -711,6 +712,46 @@ sap.ui.define([
                 this.selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
             },
 
+            handleNFASave: function () {
+                var sData = this.getView().getModel("nfaModel").getProperty("/");
+                var sData1 = JSON.parse(JSON.stringify(sData));
+                var settings = {
+                    async: false,
+                    url: "/comparative-analysis/cpcNFADetails",
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json"
+                       // "X-CSRF-Token": token
+                    },
+                    processData: false,
+                    data: JSON.stringify(sData1)
+                };
+                //this.getView().setBusy(true);
+                $.ajax(settings)
+                    .done(function (response) {
+                        this.getView().setBusy(false);
+                        MessageBox.success("Data Saved Successfully");
+                    }.bind(this)
+                    )
+                    .fail(function (error) {
+                        this.getView().setBusy(false);
+                        var errorMessage = error.responseJSON.error.message;
+                        if (errorMessage.startsWith("Reference integrity is violated for association")) {
+                            var associatedField = error.responseJSON.error.target.split(".")[1].toLowerCase();
+                            MessageBox.error("Invalid value for field : " + associatedField);
+                            throw new Error("");
+                        } else if (errorMessage.startsWith("Entity already exists")) {
+                            MessageBox.error("Entity already exists");
+                            throw new Error("");
+                        }
+                        else {
+                            MessageBox.error(error.responseText);
+                            return;
+                        }
+                    }.bind(this));
+            },
+
+            // Print NFA PDF format
             onNFAPrint: function () {
                 this.nfaVersionForCS; // This is for the CS data
                 this.nfapackingTable; // This is for the packing table

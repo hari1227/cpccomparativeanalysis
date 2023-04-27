@@ -146,12 +146,12 @@
                                     <Label text="Cash Discount" />
                                     <Input value = ""/> -->
                                     <Label text="Delivery" class="sapUiTinyMarginBegin"/>
-                                    <Input value = ""/>
+                                    <Input value = "{nfaModel>/deliveryPeriod}"/>
                                     <Label text="Quantity" />
-                                    <Input value = ""/>
+                                    <Input value = "{nfaModel>/quantity}"/>
                                     <core:Title/>
                                     <Label text="Payment Plan" />
-                                    <Input value = ""/>
+                                    <Input value = "{nfaModel>/paymentPlan}"/>
                                     <!-- <Label text="Packing/Quality" />
                                     <Input value = ""/>
                                     <Label text="Product Testing" />
@@ -164,7 +164,7 @@
                             </form:SimpleForm>
                             <VBox >
                                 <Label text="Justification" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="">
+                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
                                 </rte:RichTextEditor>
                             </VBox>
                             <VBox>
@@ -173,7 +173,7 @@
                             </VBox>
                             <VBox >
                                 <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="">
+                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
                                 </rte:RichTextEditor>
                             </VBox>
                         </IconTabFilter>
