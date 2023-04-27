@@ -146,9 +146,9 @@
                                     <Label text="Cash Discount" />
                                     <Input value = ""/> -->
                                     <Label text="Delivery" class="sapUiTinyMarginBegin"/>
-                                    <Input value = "{nfaModel>/deliveryPeriod}"/>
+                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
                                     <Label text="Quantity" />
-                                    <Input value = "{nfaModel>/quantity}"/>
+                                    <Input value = "{nfaModel>/quantity}" editable="false"/>
                                     <core:Title/>
                                     <Label text="Payment Plan" />
                                     <Input value = "{nfaModel>/paymentPlan}"/>

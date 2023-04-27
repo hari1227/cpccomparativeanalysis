@@ -112,6 +112,7 @@ sap.ui.define([
                 var nfaPricingObj = {}, nfaPricingFinalData = [];
                 var nfavendorList = [], lookup;
                 var columnData = [];
+                
                 //Get Unique vendor list from NFA Data
                 lookup = {};
                 for (var item, i = 0; item = nfaPricingData[i++];) {
@@ -235,7 +236,7 @@ sap.ui.define([
             showComparativeTable: function (rfqItems) {
                 //Data for NFA
                 var nfaRequiredData = [];
-
+                this.nfaProductClauseTable = [];
                 //Get Unique Vendors from the comparative Table
                 var lookup = {};
                 var items = rfqItems;//data.ComparativeAnalysis;
@@ -284,16 +285,21 @@ sap.ui.define([
                 var productSKUData = {};
                 var productSKUTotal = {};
                 var productSKUAverage = {};
-                productSKUAverage.itemTitle = "Average Price";
-                productSKUTotal.itemTitle = "TOTAL";
+               // productSKUAverage.itemTitle = "Average Price";
+                productSKUAverage.Particulars = "Average Price";
+               // productSKUTotal.itemTitle = "TOTAL";
+                productSKUTotal.Particulars = "TOTAL";
                 for (var i = 0; i < uniqueProducts.length; i++) {
                     var filteredData = rfqItems.filter(function (ca) {
                         return ca.itemTitle == uniqueProducts[i];
                     });
                     productData = {};
-                    productData.itemTitle = uniqueProducts[i];
+                  //  productData.itemTitle = uniqueProducts[i];
+                    productData.Particulars = uniqueProducts[i];
                     // For sku packing data - start
                     productSKUData = {};
+                    // productSKUData.itemTitle = uniqueProducts[i];
+                    productSKUData.Particulars = uniqueProducts[i];
                     // PLAN = Sum of all the quantity of the unique product -> no used after discussion
                     //PLAN = Sum of all the quantity for each SKU based on the one vendor bid
                     productSKUData.PLAN = filteredData.filter(function (obj) {
@@ -304,18 +310,19 @@ sap.ui.define([
                         // }
                     }, 0);
                     productSKUTotal.PLAN = productSKUTotal.PLAN ? productSKUTotal.PLAN + productSKUData.PLAN : productSKUData.PLAN; // for packing table
-                    productSKUData.itemTitle = uniqueProducts[i];
+                   // productSKUData.itemTitle = uniqueProducts[i];
+                   //productSKUData.Particulars = uniqueProducts[i];
                     // For sku packing data - end
                     for (var filData of filteredData) {
-                        productData[filData.vendorName + filData.eventID] = filData.finalFGPrice;
+                        productData[filData.vendorName + "(" + filData.eventID + ")"] = filData.finalFGPrice;
                         //Code for Packing table - start 
-                        productSKUData[filData.vendorName + filData.eventID] = filData.finalFGPrice * productSKUData.PLAN
-                        if (productSKUTotal[filData.vendorName + filData.eventID]) {
-                            productSKUTotal[filData.vendorName + filData.eventID] = productSKUTotal[filData.vendorName + filData.eventID] + productSKUData[filData.vendorName + filData.eventID];
+                        productSKUData[filData.vendorName + "(" + filData.eventID + ")"] = filData.finalFGPrice * productSKUData.PLAN
+                        if (productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"]) {
+                            productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] = productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] + productSKUData[filData.vendorName + "(" + filData.eventID + ")"];
                         } else {
-                            productSKUTotal[filData.vendorName + filData.eventID] = productSKUData[filData.vendorName + filData.eventID];
+                            productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] = productSKUData[filData.vendorName + "(" + filData.eventID + ")"];
                         }
-                        productSKUAverage[filData.vendorName + filData.eventID] = productSKUTotal[filData.vendorName + filData.eventID] / productSKUTotal.PLAN;
+                        productSKUAverage[filData.vendorName + "(" + filData.eventID + ")"] = productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] / productSKUTotal.PLAN;
                         //Code for Packing table - end
                     }
                     finalData.ComparativeAnalysis.push(productData);
@@ -336,14 +343,18 @@ sap.ui.define([
                     { id: "otherExpenses", name: "Misc." },
                     { id: "cashDiscount", name: "Cash Discount in %" }
                 ];
-                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {}, cashDiscountData;
-                productSKUAveragePriceCD.itemTitle = "Average Price with CD";
-                productTotalCost.itemTitle = "TOTAL-- Rs./Lt";
+                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {}, cashDiscountData, nfaVendorCashDisc = {};
+               // productSKUAveragePriceCD.itemTitle = "Average Price with CD";
+              //  productTotalCost.itemTitle = "TOTAL-- Rs./Lt";
+                productSKUAveragePriceCD.Particulars = "Average Price with CD";
+                productTotalCost.Particulars = "TOTAL-- Rs./Lt";
 
                 for (var j in costFields) {
                     productCostObj = {};
                     productCostObj.itemId = costFields[j].id;
-                    productCostObj.itemTitle = costFields[j].name;
+                   // productCostObj.itemTitle = costFields[j].name;
+                    productCostObj.Particulars = costFields[j].name;
+                    
                     for (var k in vendorList) {
                         if (vendorList[k].vendorName !== "itemTitle") {
                             //productClauseObj[vendorList[k].vendorName] = vendorList[k][productClause[j].id];
@@ -354,26 +365,33 @@ sap.ui.define([
                             //var recordswithMaxQuan = Math.max.apply(Math, filteredCostData.map(function(item) { return item.quantity; }));
                             var recordswithMaxQuan = filteredCostData.reduce((p, c) => p.quantity > c.quantity ? p : c);
 
-                            productCostObj[vendorList[k].vendorName + vendorList[k].eventID] = recordswithMaxQuan[costFields[j].id]
+                            productCostObj[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = recordswithMaxQuan[costFields[j].id];
                             if (costFields[j].id !== "cashDiscount") {
 
-                                if (productTotalCost[vendorList[k].vendorName + vendorList[k].eventID]) {
-                                    productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] = productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] + parseInt(recordswithMaxQuan[costFields[j].id]);
+                                if (productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"]) {
+                                    productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] + parseInt(recordswithMaxQuan[costFields[j].id]);
                                 } else {
-                                    productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] = parseInt(recordswithMaxQuan[costFields[j].id]);
+                                    productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = parseInt(recordswithMaxQuan[costFields[j].id]);
                                 }
                             } else {
-                                productSKUAveragePriceCD[vendorList[k].vendorName + vendorList[k].eventID] = productSKUAverage[vendorList[k].vendorName + vendorList[k].eventID] - (productSKUAverage[vendorList[k].vendorName + vendorList[k].eventID] / ((parseInt(productCostObj[vendorList[k].vendorName + vendorList[k].eventID])) * 100));
+                                productSKUAveragePriceCD[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] - (productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] / ((parseInt(productCostObj[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"])) * 100));
+                                nfaVendorCashDisc.Particulars = costFields[j].name;
+                                nfaVendorCashDisc[vendorList[k].vendorName] = recordswithMaxQuan[costFields[j].id];
+                                
                             }
+                            
+                            
                         }
 
                     }
                     finalData.ComparativeAnalysis.push(productCostObj);
                     // productClausevendorList.itemTitle = productClause[j];
-                    if (productCostObj.itemTitle == "Cash Discount in %") {
+                   // if (productCostObj.itemTitle == "Cash Discount in %") {
+                    if (productCostObj.Particulars == "Cash Discount in %") {
                         skuPackingData.push(productCostObj);
                         nfaRequiredData.push(productCostObj);
                         cashDiscountData = productCostObj;
+                        this.nfaProductClauseTable.push(nfaVendorCashDisc);
                     }
 
                 }
@@ -387,22 +405,30 @@ sap.ui.define([
                 { id: "creditDays", name: "Credit Days" }];
                 var productClauseObj;
                 var productCashPrice = {};
-                productCashPrice.itemTitle = "Cash Price of FG";
+                var nfaproductClauseObj ={};
+               // productCashPrice.itemTitle = "Cash Price of FG";
+                productCashPrice.Particulars = "Cash Price of FG";
                 for (var j in productClause) {
                     productClauseObj = {};
+                    nfaproductClauseObj = {};
                     productClauseObj.itemId = productClause[j].id;
-                    productClauseObj.itemTitle = productClause[j].name;
+                  //  productClauseObj.itemTitle = productClause[j].name;
+                    productClauseObj.Particulars = productClause[j].name;
+                    nfaproductClauseObj.Particulars = productClause[j].name;
                     for (var k in vendorList) {
+                        
                         if (vendorList[k].vendorName !== "itemTitle") {
-                            productClauseObj[vendorList[k].vendorName + vendorList[k].eventID] = vendorList[k][productClause[j].id];
+                            productClauseObj[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = vendorList[k][productClause[j].id];
+                            nfaproductClauseObj[vendorList[k].vendorName] = vendorList[k][productClause[j].id];
                         }
                         // Calculate the cost price in FG
-                        productCashPrice[vendorList[k].vendorName + vendorList[k].eventID] = productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] - (productTotalCost[vendorList[k].vendorName + vendorList[k].eventID] * cashDiscountData[vendorList[k].vendorName + vendorList[k].eventID] / 100);
+                        productCashPrice[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] - (productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] * cashDiscountData[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] / 100);
                         //productTotalCost;
                     }
                     if (productClause[j].id === "shelfLife") {
                         finalData.ComparativeAnalysis.unshift(productClauseObj);
                     } else {
+                        
                         if (productClause[j].id === "creditDays") {
                             finalData.ComparativeAnalysis.splice((finalData.ComparativeAnalysis.length - 2), 0, productClauseObj);
                         } else {
@@ -412,13 +438,14 @@ sap.ui.define([
                     // productClausevendorList.itemTitle = productClause[j];
                     if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
                         nfaRequiredData.push(productClauseObj);
+                        this.nfaProductClauseTable.push(nfaproductClauseObj);
                     }
 
                 }
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
-                /* const domesticFields =  [
+                 const domesticFields =  [
                      "bulkCost",
                      "tollCharges",
                      "freightIns",
@@ -436,10 +463,11 @@ sap.ui.define([
                          }, {})
                          }
                      return eachCaData;
-                 })  */
+                 })  
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
+                console.log(this.nfaProductClauseTable);
 
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("comparativeTable");
@@ -464,9 +492,9 @@ sap.ui.define([
                 var text;
                 for (i = 0; i < vendorList.length; i++) {
                     if (i) {
-                        text = vendorList[i].vendorName + vendorList[i].eventID;
+                        text = vendorList[i].vendorName + "(" + vendorList[i].eventID + ")";
                     } else {
-                        text = vendorList[i].vendorName;
+                        text = "Particulars"; //vendorList[i].vendorName;
                     }
                     var cell1 = new sap.m.Text({
                         text: "{" + text + "}"
@@ -489,9 +517,9 @@ sap.ui.define([
             showPackingTable: function (skuPackingData, vendorList) {
 
                 //#region - temp fix for currency format
-                /*  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
+                  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
                   skuPackingData = skuPackingData.map(eachPdData => {
-                      if(domesticCurFields.includes(eachPdData.itemTitle)) {
+                      if(domesticCurFields.includes(eachPdData.Particulars)) {
                           return Object.keys(eachPdData).reduce((acc, key)=> {
                                   return {...acc, [key]: key.includes("Doc") ? new Intl.NumberFormat("en-IN", {
                                          style: "currency",
@@ -500,7 +528,7 @@ sap.ui.define([
                           }, {})
                           }
                       return eachPdData;
-                  }) */
+                  }) 
                 //#endregion - temp fix for currency format
 
                 this.nfapackingTable = skuPackingData; // for NFA print
@@ -532,9 +560,9 @@ sap.ui.define([
                 var text;
                 for (var i = 0; i < vendorList.length; i++) {
                     if (i && i != 1) {
-                        text = vendorList[i].vendorName + vendorList[i].eventID;
+                        text = vendorList[i].vendorName + "(" + vendorList[i].eventID + ")";
                     } else {
-                        text = vendorList[i].vendorName;
+                        text = vendorList[i].vendorName=="itemTitle"?"Particulars":vendorList[i].vendorName;
                     }
                     var cell1 = new sap.m.Text({
                         text: "{" + text + "}"
@@ -758,7 +786,8 @@ sap.ui.define([
                 const nfaMultiVendorPrice = this.nfaMultiVendorPrice; // This is for the Table ( Only in case of multiple vendor Split) (CPC)
                 const nfaOtherData = this.getView().getModel("nfaModel").getProperty("/"); // Other details like Qunatity, Payment Plan, Justification
 
-                console.log({nfaOtherData, nfaVersionForCS})
+                this.nfaProductClauseTable; // This for the Cash Discount, gst and credit days table 
+                //console.log({nfaOtherData, nfaVersionForCS})
 
                 const data = {
                     date: "12-Mar-2023",
