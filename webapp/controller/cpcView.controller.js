@@ -445,25 +445,26 @@ sap.ui.define([
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
-                const domesticFields =  [
-                    "bulkCost",
-                    "tollCharges",
-                    "freightIns",
-                    "pmCost",
-                    "otherExpenses",
-                  ];
-                const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
-                finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
-                    if(domesticFields.includes(eachCaData.itemId) || domesticTitleFields.includes(eachCaData.itemTitle)) {
-                        return Object.keys(eachCaData).reduce((acc, eachKey)=> {
-                                return {...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
-                                       style: "currency",
-                                       currency: "INR",
-                                       }).format(eachCaData[eachKey]) : eachCaData[eachKey]}
-                        }, {})
-                        }
-                    return eachCaData;
-                })
+                const domesticFieldIdentifiers = {
+                    itemId: [
+                        "bulkCost",
+                        "tollCharges",
+                        "freightIns",
+                        "pmCost",
+                        "otherExpenses",
+                      ],
+                    itemTitle: [],
+                    Particulars : [
+                        "Totto 500 ML",
+                        "Chlorveer Strong 1 Litre",
+                        "Chlorveer Strong 500 ml",
+                        "Chlorveer Strong 5 Litre",
+                        "Cash Price of FG",
+                        "TOTAL-- Rs./Lt"
+                    ]
+                }
+                
+                finalData.ComparativeAnalysis = this.currencyFormatter(finalData.ComparativeAnalysis, domesticFieldIdentifiers);
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
@@ -517,18 +518,17 @@ sap.ui.define([
             showPackingTable: function (skuPackingData, vendorList) {
 
                 //#region - temp fix for currency format
-                  const domesticCurFields = ['TOTAL', 'Average Price', 'Average Price with CD']
-                  skuPackingData = skuPackingData.map(eachPdData => {
-                      if(domesticCurFields.includes(eachPdData.Particulars)) {
-                          return Object.keys(eachPdData).reduce((acc, key)=> {
-                                  return {...acc, [key]: key.includes("Doc") ? new Intl.NumberFormat("en-IN", {
-                                         style: "currency",
-                                         currency: "INR",
-                                         }).format(eachPdData[key]) : eachPdData[key]}
-                          }, {})
-                          }
-                      return eachPdData;
-                  }) 
+                  const domesticFieldIdentifiers = {
+                      Particulars: [
+                          'TOTAL', 'Average Price',
+                          'Average Price with CD',
+                          "Totto 500 ML",
+                          "Chlorveer Strong 1 Litre",
+                          "Chlorveer Strong 500 ml",
+                          "Chlorveer Strong 5 Litre",
+                      ],
+                  }
+                  skuPackingData = this.currencyFormatter(skuPackingData, domesticFieldIdentifiers);
                 //#endregion - temp fix for currency format
 
                 this.nfapackingTable = skuPackingData; // for NFA print
@@ -977,7 +977,31 @@ sap.ui.define([
                 win.document.querySelector("head").appendChild(style);
                 win.print();
                 //win.close();
-            }
+            },
 
+            /**
+             * 
+             * @param {Array} sourceData Data to format
+             * @param {{}} identifierObj Idendifier object with keys as identifier and value as identifier value in the source data, value should be in array
+             * @returns Formatted Data
+             */
+            currencyFormatter: function(sourceData, identifierObj) {
+                return sourceData.map(eachCaData => {
+                    const isIdentified = Object.keys(identifierObj).some((eachidentifierKey) =>
+                    identifierObj[eachidentifierKey].includes(eachCaData[eachidentifierKey])
+                    )
+                    if (isIdentified) {
+                        return Object.keys(eachCaData).reduce((acc, eachKey) => {
+                            return {
+                                ...acc, [eachKey]: eachKey.includes("Doc") ? new Intl.NumberFormat("en-IN", {
+                                    style: "currency",
+                                    currency: "INR",
+                                }).format(eachCaData[eachKey]) : eachCaData[eachKey]
+                            }
+                        }, {})
+                    }
+                    return eachCaData;
+                })
+            }
         });
     });
