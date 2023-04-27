@@ -423,7 +423,6 @@ sap.ui.define([
                     "freightIns",
                     "pmCost",
                     "otherExpenses",
-                    "cashDiscount",
                   ];
                 const domesticTitleFields = ["Cash Price of FG", "TOTAL-- Rs./Lt"];
                 finalData.ComparativeAnalysis = finalData.ComparativeAnalysis.map(eachCaData => {
