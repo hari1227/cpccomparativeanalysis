@@ -169,7 +169,7 @@
                             </VBox>
                             <VBox>
                                  <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="tableCSS"/>
+                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
                             </VBox>
                             <VBox >
                                 <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
