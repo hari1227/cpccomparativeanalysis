@@ -498,7 +498,8 @@ sap.ui.define([
                         text = "Particulars"; //vendorList[i].vendorName;
                     }
                     var cell1 = new sap.m.Text({
-                        text: "{" + text + "}"
+                        text: "{" + text + "}",
+                        textAlign: sap.ui.core.TextAlign.Right
                     });
                     oCell.push(cell1);
                 }
@@ -1044,6 +1045,17 @@ sap.ui.define([
                     }
                     return eachCaData;
                 })
+            },
+
+            onITBSelectionChange: function(oEvent) {
+                let key = oEvent.getSource().getSelectedKey();
+                if(key == "nfatemplate") {
+                    this.getView().byId("printPDF").setVisible(true);
+                    this.getView().byId("page").setShowFooter(true);
+                } else {
+                    this.getView().byId("printPDF").setVisible(false);
+                    this.getView().byId("page").setShowFooter(false);
+                }
             }
         });
     });

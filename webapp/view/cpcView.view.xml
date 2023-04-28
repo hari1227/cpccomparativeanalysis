@@ -9,7 +9,7 @@
     xmlns:ui="sap.ui.table"
     xmlns:rte="sap.ui.richtexteditor">
 
-    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
+    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="false">
 
         <semantic:titleHeading>
             <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
@@ -60,12 +60,12 @@
                     </filterbar:filterGroupItems>
                 </filterbar:FilterBar>
 
-                <IconTabBar id="idIconTabBarNoIcons" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
+                <IconTabBar id="comparativeAnalysis" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding" select="onITBSelectionChange">
                     <items>
                         <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
                             <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
                             <VBox >
-                                <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true">
+                                <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true" class="tableCSS">
                                     <headerToolbar>
                                         <OverflowToolbar id="_IDGenOverflowToolbar1">
                                             <Title id="tableHeader" text="List" level="H3"/>
@@ -80,14 +80,14 @@
                                     <!-- Our code in the controller goes here -->
                                 </Table>
                                 <!-- </smartTable:SmartTable> -->
-                                <Table id="packagingTable" class="sapUiLargeMarginTop" growing="true" growingScrollToLoad="true" alternateRowColors="false" backgroundDesign="Transparent">
+                                <Table id="packagingTable" class="sapUiLargeMarginTop tableCSS" growing="true" growingScrollToLoad="true" alternateRowColors="false" backgroundDesign="Transparent" >
                                 </Table>
                             </VBox>
                         </IconTabFilter>
-                        <IconTabFilter id="_IDGenIconTabFilter2" text="Sales/Purchase Summary" key="SS">
+                        <IconTabFilter id="summary" text="Sales/Purchase Summary" key="SS">
                             <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
                                 <content>
-                                    <Table id="salesTable" items="{/SalesSummary}">
+                                    <Table id="salesTable" items="{/SalesSummary}" >
                                         <columns>
                                             <Column id="nameColumn">
                                                 <Text text="Sales Summary" id="nameColumnTitle"/>
@@ -132,7 +132,7 @@
                                 </content>
                             </Panel>
                         </IconTabFilter>
-                        <IconTabFilter text="NFA Template">
+                        <IconTabFilter text="NFA Template" id="nfatemplate" key="nfatemplate">
                             <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
                                 <form:content>
                                     <core:Title/>
@@ -168,8 +168,8 @@
                                 </rte:RichTextEditor>
                             </VBox>
                             <VBox>
-                                <Text text="Multi Vendor Split" class="sapUiTinyMarginTop"/>
-                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None"/>
+                                 <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="tableCSS"/>
                             </VBox>
                             <VBox >
                                 <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
@@ -186,7 +186,7 @@
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
-            <Button text="Print" press="onNFAPrint"/>
+            <Button id="printPDF" text="Print" press="onNFAPrint"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>
 
