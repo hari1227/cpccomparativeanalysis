@@ -47,7 +47,7 @@ sap.ui.define([
                         console.log(error);
                     }
                 });
-                this.getNFAPricingTableData();
+                //this.getNFAPricingTableData();
                 this.addSalesSummary();
 
                 var nfaModel = new JSONModel();
@@ -80,51 +80,65 @@ sap.ui.define([
                     .done(function (response) {
                         this.getView().getModel("nfaModel").setProperty("/", response.value[0]);
                         this.showNFAPackWisePrice(response.value[0].cpcNFAPackWisePriceDetails);
+                        this.showNFAPricingTable(response.value[0].cpcNFAPackWisePriceDetails);
                     }.bind(this)).fail(function () {
 
                     });
 
             },
-
+            // Calcualtion for pack wise data in NFA
             showNFAPackWisePrice: function (cpcPackWiseData) {
 
                 var nfaPackWisePriceColumns = [], nfaUniquSKUs = [];
                 var nfaPackObj = {}, nfaPackFinalData = [];
-                nfaPackWisePriceColumns.push("SKUName");
+               // nfaPackWisePriceColumns.push({columnName: "SKUName"});
                 //Get Column list
                 for (var item of cpcPackWiseData) {
                     if (!nfaPackWisePriceColumns.includes(item.vendorName)) {
-                        nfaPackWisePriceColumns.push(item.vendorName);
+                        nfaPackWisePriceColumns.push({columnName: item.vendorName });
                     }
                     if (!nfaUniquSKUs.includes(item.SKUName)) {
                         nfaUniquSKUs.push(item.SKUName);
                     }
                 }
+
+                var nfalookup = {};
+                var uniqueColumnData = [];
+                for (var item, i = 0; item = nfaPackWisePriceColumns[++i];) {
+                    var name = item.columnName;
+
+                    if (!(name in nfalookup)) {
+                        nfalookup[name] = 1;
+                        uniqueColumnData.push(nfaPackWisePriceColumns[i]);
+                    }
+                }
+                uniqueColumnData.unshift({ columnName: "SKU Name" });
+
                 for (var i in nfaUniquSKUs) {
                     let nfaFilteredData = cpcPackWiseData.filter(function (item) {
                         return item.SKUName == nfaUniquSKUs[i];
                     });
                     nfaPackObj = {};
+                    nfaPackObj["SKU Name"] = nfaUniquSKUs[i];
                     for (let obj of nfaFilteredData) {
                         nfaPackObj.Vendor = obj.vendorName;
-                        nfaPackObj.lastPurchasePrice = obj.lastPurchasePrice;
+                        nfaPackObj["Last Purchase Price"] = obj.lastPurchasePrice;
                         nfaPackObj.MRP = obj.MRP;
-                        nfaPackObj[obj.vendorName] = obj.finalFGPrice;
+                        nfaPackObj[obj.vendorName] = obj.finalFGPrice?obj.finalFGPrice:"NA";
                     }
                     nfaPackFinalData.push(nfaPackObj);
                 }
-                nfaPackWisePriceColumns.push("lastPurchasePrice");
-                nfaPackWisePriceColumns.push("MRP");
-                this.generateNFAPackWiseTable(nfaPackFinalData, nfaPackWisePriceColumns);
+                uniqueColumnData.push({columnName: "Last Purchase Price"});
+                uniqueColumnData.push({columnName: "MRP"});
+                this.generateNFAPackWiseTable(nfaPackFinalData, uniqueColumnData);
             },
 
             // Create and bind multi vendor table in NFA template
             generateNFAPackWiseTable: function (nfaPricingData, uniqueColumnData) {
-                this.nfaMultiVendorPrice = nfaPricingData;
+                this.nfaPackWisePrice = nfaPricingData;
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("nfaPackWiseTable");
-                var columnName, lookup = {};
-                var ColumnList = [];
+                var template;
 
                 var nfaPackWiseFinalModel = new sap.ui.model.json.JSONModel();
                 this.getView().setModel(nfaPackWiseFinalModel, "nfaPackWiseFinalModel");
@@ -137,15 +151,23 @@ sap.ui.define([
                 oTable.setVisibleRowCount(nfaPricingData.length);
                 oTable.bindColumns("/columns", function (sId, oContext) {
                     var columnName = oContext.getObject().columnName;
+                    if(columnName == "MRP") {
+                        template = new sap.m.Input({
+                            text: "{" + columnName + "}",
+                            wrapping: true
+                        })
+                    } else {
+                        template = new sap.m.Label({
+                            text: "{" + columnName + "}",
+                            wrapping: true
+                        });
+                    }
                     return new sap.ui.table.Column({
                         label: new sap.m.Label({
                             text: columnName,
                             wrapping: true
                         }),
-                        template: new sap.m.Label({
-                            text: "{" + columnName + "}",
-                            wrapping: true
-                        })
+                        template: template
                     });
                 });
 
@@ -153,90 +175,133 @@ sap.ui.define([
                 //oTable.bindItems("nfaPricingTable>/", aColList);
             },
 
-            getNFAPricingTableData: function () {
-                //Get NFA relavent Data
-                //Fetch Awarded scenarios
+            // getNFAPricingTableData: function () {
+            //     //Get NFA relavent Data
+            //     //Fetch Awarded scenarios
 
-                var settings = {
-                    async: true,
-                    url: "./comparative-analysis/CPCAwardedScenarios",
-                    method: "GET",
-                    headers: {
-                        "content-type": "application/json"
-                    },
-                    processData: false
-                    //  data: JSON.stringify(data)
-                };
-                $.ajax(settings)
-                    .done(function (response) {
-                        //this.getView().getModel("nfaPricingTable").setProperty("/", response.value);
-                        this.showNFAPricingTable(response.value);
-                    }.bind(this)).fail(function () {
-                        MessageBox.error("error:" + error.message);
-                    });
-            },
+            //     var settings = {
+            //         async: true,
+            //         url: "./comparative-analysis/CPCAwardedScenarios",
+            //         method: "GET",
+            //         headers: {
+            //             "content-type": "application/json"
+            //         },
+            //         processData: false
+            //         //  data: JSON.stringify(data)
+            //     };
+            //     $.ajax(settings)
+            //         .done(function (response) {
+            //             //this.getView().getModel("nfaPricingTable").setProperty("/", response.value);
+            //             this.showNFAPricingTable1(response.value);
+            //         }.bind(this)).fail(function () {
+            //             MessageBox.error("error:" + error.message);
+            //         });
+            // },
             // Calculate multi vendor pricing table columns and rows 
-            showNFAPricingTable: function (nfaPricingData) {
-                var filteredNFAData;
-                var nfaPricingObj = {}, nfaPricingFinalData = [];
-                var nfavendorList = [], lookup;
-                var columnData = [];
-
-                //Get Unique vendor list from NFA Data
-                lookup = {};
-                for (var item, i = 0; item = nfaPricingData[i++];) {
-                    var name = item.vendorMailId;
-
-                    if (!(name in lookup)) {
-                        lookup[name] = 1;
-                        nfavendorList.push(name);
+            showNFAPricingTable: function (cpcPackWiseData) {
+                var nfaPricincingColumns = [], nfaUniqueVendors=[];
+                var nfaPackObj = {}, nfaPackFinalData = [];
+                nfaPricincingColumns.push({columnName: "Vendor"});
+                //Get Column list
+                for (var item of cpcPackWiseData) {
+                    if (!nfaPricincingColumns.includes(item.SKUName + "-Quantity") && !nfaPricincingColumns.includes(item.SKUName + "-Price")) {
+                        nfaPricincingColumns.push({columnName: item.SKUName + "-Quantity"});
+                        nfaPricincingColumns.push({columnName: item.SKUName + "-Price"});
+                    }
+                    if (!nfaUniqueVendors.includes(item.vendorName)) {
+                        nfaUniqueVendors.push(item.vendorName);
                     }
                 }
-                for (var i = 0; i < nfavendorList.length; i++) {
 
-                    filteredNFAData = nfaPricingData.filter(function (item) {
-                        return item.vendorMailId == nfavendorList[i];
-                    });
-                    // nfaPricingObj.vendor = this.vendorList[i].itemTitle;
-                    nfaPricingObj = {};
-                    for (var nfaData of filteredNFAData) {
-                        nfaPricingObj.Vendor = nfaData.vendorName;
-                        nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaPricingObj[nfaData.SKUName + "-Quantity"] ? nfaPricingObj[nfaData.SKUName + "-Quantity"] + nfaData.quantity : nfaData.quantity;
-                        nfaPricingObj[nfaData.SKUName + "-Price"] = nfaPricingObj[nfaData.SKUName + "-Price"] ? nfaPricingObj[nfaData.SKUName + "-Price"] + nfaData.price : nfaData.price;
-                        columnData.push({ columnName: nfaData.SKUName + "-Quantity" }, { columnName: nfaData.SKUName + "-Price" });
-                    }
-                    nfaPricingFinalData.push(nfaPricingObj);
-
-                }
-                //Get unique column names
                 var nfalookup = {};
                 var uniqueColumnData = [];
-                for (var item, i = 0; item = columnData[++i];) {
+                for (var item, i = 0; item = nfaPricincingColumns[++i];) {
                     var name = item.columnName;
 
                     if (!(name in nfalookup)) {
                         nfalookup[name] = 1;
-                        uniqueColumnData.push(columnData[i]);
+                        uniqueColumnData.push(nfaPricincingColumns[i]);
                     }
                 }
                 uniqueColumnData.unshift({ columnName: "Vendor" });
-                for (var i in nfaPricingFinalData) {
-                    for (var columnName of uniqueColumnData) {
-                        if (!nfaPricingFinalData[i][columnName.columnName]) {
-                            nfaPricingFinalData[i][columnName.columnName] = "NA";
-                        }
+
+                for (var i in nfaUniqueVendors) {
+                    let nfaFilteredData = cpcPackWiseData.filter(function (item) {
+                        return item.vendorName == nfaUniqueVendors[i];
+                    });
+                    nfaPackObj = {};
+                    for (let obj of nfaFilteredData) {
+                        nfaPackObj.Vendor = obj.vendorName;
+                        nfaPackObj[obj.SKUName + "-Quantity"] = obj.finalQuantity?obj.finalQuantity:"NA";
+                        nfaPackObj[obj.SKUName + "-Price"] = obj.finalFGPrice?obj.finalFGPrice:"NA";
                     }
+                    nfaPackFinalData.push(nfaPackObj);
                 }
-                //console.log(nfaPricingFinalData);
-                //this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
-                this.generateNFAMultiVendorTable(nfaPricingFinalData, uniqueColumnData);
+                this.generateNFAMultiVendorTable(nfaPackFinalData, uniqueColumnData, "nfaMultiVendorTable1");
             },
 
+            // // Calculate multi vendor pricing table columns and rows 
+            // showNFAPricingTable1: function (nfaPricingData) {
+            //     var filteredNFAData;
+            //     var nfaPricingObj = {}, nfaPricingFinalData = [];
+            //     var nfavendorList = [], lookup;
+            //     var columnData = [];
+
+            //     //Get Unique vendor list from NFA Data
+            //     lookup = {};
+            //     for (var item, i = 0; item = nfaPricingData[i++];) {
+            //         var name = item.vendorMailId;
+
+            //         if (!(name in lookup)) {
+            //             lookup[name] = 1;
+            //             nfavendorList.push(name);
+            //         }
+            //     }
+            //     for (var i = 0; i < nfavendorList.length; i++) {
+
+            //         filteredNFAData = nfaPricingData.filter(function (item) {
+            //             return item.vendorMailId == nfavendorList[i];
+            //         });
+            //         // nfaPricingObj.vendor = this.vendorList[i].itemTitle;
+            //         nfaPricingObj = {};
+            //         for (var nfaData of filteredNFAData) {
+            //             nfaPricingObj.Vendor = nfaData.vendorName;
+            //             nfaPricingObj[nfaData.SKUName + "-Quantity"] = nfaPricingObj[nfaData.SKUName + "-Quantity"] ? nfaPricingObj[nfaData.SKUName + "-Quantity"] + nfaData.quantity : nfaData.quantity;
+            //             nfaPricingObj[nfaData.SKUName + "-Price"] = nfaPricingObj[nfaData.SKUName + "-Price"] ? nfaPricingObj[nfaData.SKUName + "-Price"] + nfaData.price : nfaData.price;
+            //             columnData.push({ columnName: nfaData.SKUName + "-Quantity" }, { columnName: nfaData.SKUName + "-Price" });
+            //         }
+            //         nfaPricingFinalData.push(nfaPricingObj);
+
+            //     }
+            //     //Get unique column names
+            //     var nfalookup = {};
+            //     var uniqueColumnData = [];
+            //     for (var item, i = 0; item = columnData[++i];) {
+            //         var name = item.columnName;
+
+            //         if (!(name in nfalookup)) {
+            //             nfalookup[name] = 1;
+            //             uniqueColumnData.push(columnData[i]);
+            //         }
+            //     }
+            //     uniqueColumnData.unshift({ columnName: "Vendor" });
+            //     for (var i in nfaPricingFinalData) {
+            //         for (var columnName of uniqueColumnData) {
+            //             if (!nfaPricingFinalData[i][columnName.columnName]) {
+            //                 nfaPricingFinalData[i][columnName.columnName] = "NA";
+            //             }
+            //         }
+            //     }
+            //     //console.log(nfaPricingFinalData);
+            //     //this.getView().getModel("nfaPricingTable").setProperty("/", nfaPricingFinalData);
+            //     this.generateNFAMultiVendorTable(nfaPricingFinalData, uniqueColumnData, "nfaMultiVendorTable");
+            // },
+
             // Create and bind multi vendor table in NFA template
-            generateNFAMultiVendorTable: function (nfaPricingData, uniqueColumnData) {
+            generateNFAMultiVendorTable: function (nfaPricingData, uniqueColumnData, tableID) {
                 this.nfaMultiVendorPrice = nfaPricingData;
                 // Create a Table for ComparativeAnalysis
-                var oTable = this.getView().byId("nfaMultiVendorTable");
+                var oTable = this.getView().byId(tableID);
                 var columnName, lookup = {};
                 var ColumnList = [];
 
@@ -390,7 +455,7 @@ sap.ui.define([
                         productSKUData[filData.vendorName + "(" + filData.eventID + ")"] = filData.finalFGPrice * productSKUData.PLAN
 
                         if (productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"]) {
-                            if (!tempSKUData.includes(filData.itemTitle+filData.eventID+filData.vendorName)) {
+                            if (!tempSKUData.includes(filData.itemTitle + filData.eventID + filData.vendorName)) {
                                 productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] = productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] + productSKUData[filData.vendorName + "(" + filData.eventID + ")"];
                             }
                         } else {
@@ -398,7 +463,7 @@ sap.ui.define([
                         }
 
                         productSKUAverage[filData.vendorName + "(" + filData.eventID + ")"] = productSKUTotal[filData.vendorName + "(" + filData.eventID + ")"] / productSKUTotal.PLAN;
-                        tempSKUData.push(filData.itemTitle+filData.eventID+filData.vendorName);
+                        tempSKUData.push(filData.itemTitle + filData.eventID + filData.vendorName);
                         //Code for Packing table - end
                     }
                     finalData.ComparativeAnalysis.push(productData);
@@ -450,7 +515,7 @@ sap.ui.define([
                                     productTotalCost[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = parseInt(recordswithMaxQuan[costFields[j].id]);
                                 }
                             } else {
-                                productSKUAveragePriceCD[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] - productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] * parseInt(productCostObj[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"]) /100;
+                                productSKUAveragePriceCD[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] = productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] - productSKUAverage[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"] * parseInt(productCostObj[vendorList[k].vendorName + "(" + vendorList[k].eventID + ")"]) / 100;
                                 nfaVendorCashDisc.Particulars = costFields[j].name;
                                 nfaVendorCashDisc[vendorList[k].vendorName] = recordswithMaxQuan[costFields[j].id];
 
@@ -864,7 +929,7 @@ sap.ui.define([
                 const nfaMultiVendorPrice = this.nfaMultiVendorPrice; // This is for the Table ( Only in case of multiple vendor Split) (CPC)
                 const nfaOtherData = this.getView().getModel("nfaModel").getProperty("/"); // Other details like Qunatity, Payment Plan, Justification
                 const nfaProductClauseTable = this.nfaProductClauseTable; // This for the Cash Discount, gst and credit days table 
-
+                const nfaPackWisePrice = this.nfaPackWisePrice; // Pack Wise Table. In case columns are required seperately refer function-> showNFAPackWisePrice
                 // NFA fields
                 const currentDate = new Date().toLocaleDateString("en-GB");
                 const subject = "Ariba Event Subject";

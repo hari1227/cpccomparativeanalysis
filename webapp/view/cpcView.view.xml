@@ -164,20 +164,24 @@
                             </form:SimpleForm>
                             <VBox >
                                 <Label text="Justification" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
+                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
                                 </rte:RichTextEditor>
                             </VBox>
-                            <VBox>
+                            <!-- <VBox>
                                  <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
+                            </VBox> -->
+                            <VBox>
+                                 <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <ui:Table id="nfaMultiVendorTable1" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
                             </VBox>
                             <VBox>
-                                <Text text="Pack Wise Price" class="sapUiTinyMarginTop"/>
+                                <Label text="Pack Wise Price" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <ui:Table id="nfaPackWiseTable" enableSelectAll= "false" selectionMode="None"/>
                             </VBox>
                             <VBox >
                                 <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="15rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
+                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
                                 </rte:RichTextEditor>
                             </VBox>
                         </IconTabFilter>
