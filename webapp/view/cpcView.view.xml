@@ -80,7 +80,8 @@
                                     <!-- Our code in the controller goes here -->
                                 </Table>
                                 <!-- </smartTable:SmartTable> -->
-                                <Table id="packagingTable" class="sapUiLargeMarginTop tableCSS" growing="true" growingScrollToLoad="true" alternateRowColors="false" backgroundDesign="Transparent" >
+                                <Table id="packagingTable" class="sapUiLargeMarginTop tableCSS" growing="true" growingScrollToLoad="true" 
+                                    alternateRowColors="false" backgroundDesign="Transparent" noDataText="Select Filters to show data in Table">
                                 </Table>
                             </VBox>
                         </IconTabFilter>
@@ -136,14 +137,7 @@
                             <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
                                 <form:content>
                                     <core:Title/>
-                                    <!-- <Label text="Recommended Vendor" class="sapUiTinyMarginTop"/>
-                                    <Input value = "" /> -->
-                                    <!-- <Label text="GST" />
-                                    <Input value = ""/>
-                                    <Label text="Credit Period" />
-                                    <Input value = ""/>
-
-                                    <Label text="Cash Discount" />
+                                   <!-- <Label text="Cash Discount" />
                                     <Input value = ""/> -->
                                     <Label text="Delivery" class="sapUiTinyMarginBegin"/>
                                     <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
@@ -152,13 +146,6 @@
                                     <core:Title/>
                                     <Label text="Payment Plan" />
                                     <Input value = "{nfaModel>/paymentPlan}"/>
-                                    <!-- <Label text="Packing/Quality" />
-                                    <Input value = ""/>
-                                    <Label text="Product Testing" />
-                                    <Input value = ""/>
-                                    <Label text="Other Standard Terms" />
-                                    <TextArea /> -->
-
 
                                 </form:content>
                             </form:SimpleForm>
@@ -180,7 +167,7 @@
                                 <ui:Table id="nfaPackWiseTable" enableSelectAll= "false" selectionMode="None"/>
                             </VBox>
                             <VBox >
-                                <Label text="Purcahse Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <Label text="Purchase Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
                                 </rte:RichTextEditor>
                             </VBox>
@@ -194,7 +181,8 @@
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
-            <Button id="printPDF" text="Print" press="onNFAPrint"/>
+            <Button id="printPDF" text="Print NFA" press="onNFAPrint"/>
+            <Button id="savePDF" text="Save NFA" press="handleNFASave"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>
 

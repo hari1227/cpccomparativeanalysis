@@ -25,9 +25,16 @@ sap.ui.define([
                 // });
 
                 this.selectedEvents = ["Doc648087602", "Doc652480915"];
+                this.nfaEvent = this.selectedEvents.slice(-1)[0];
+                let filters = "?$filter=";
+                for (let i = 0; i < this.selectedEvents.length; i++) {
+                    filters = i ? filters + " or eventID eq '" + this.selectedEvents[i] + "'" : filters + "eventID eq '" + this.selectedEvents[i] + "'";
+                }
+                var url = "./comparative-analysis/RFQEventCompDetails" + filters;
+
                 //Filters to be passed based on the selectedEvents
                 $.get({
-                    url: "./comparative-analysis/RFQEventCompDetails",
+                    url: url, //"./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
                         this.rfqItemsWithoutSum = resp.value;
                         this.showComparativeTable(resp.value);
@@ -55,14 +62,14 @@ sap.ui.define([
                 // this.nfaData = {
                 // };
 
-                this.readNFAData();
+                // this.readNFAData("7000000026", "Doc652480915");
             },
 
-            readNFAData: function () {
+            readNFAData: function (rfqNumber, eventId) {
 
                 var data = {
-                    "rfqNumber": "7000000026",
-                    "eventId": "Doc652480915",
+                    "rfqNumber": rfqNumber,
+                    "eventId": eventId,
                 }
                 // var token = this.fetchToken();
                 var settings = {
@@ -91,11 +98,11 @@ sap.ui.define([
 
                 var nfaPackWisePriceColumns = [], nfaUniquSKUs = [];
                 var nfaPackObj = {}, nfaPackFinalData = [];
-               // nfaPackWisePriceColumns.push({columnName: "SKUName"});
+                // nfaPackWisePriceColumns.push({columnName: "SKUName"});
                 //Get Column list
                 for (var item of cpcPackWiseData) {
                     if (!nfaPackWisePriceColumns.includes(item.vendorName)) {
-                        nfaPackWisePriceColumns.push({columnName: item.vendorName });
+                        nfaPackWisePriceColumns.push({ columnName: item.vendorName });
                     }
                     if (!nfaUniquSKUs.includes(item.SKUName)) {
                         nfaUniquSKUs.push(item.SKUName);
@@ -124,12 +131,12 @@ sap.ui.define([
                         nfaPackObj.Vendor = obj.vendorName;
                         nfaPackObj["Last Purchase Price"] = obj.lastPurchasePrice;
                         nfaPackObj.MRP = obj.MRP;
-                        nfaPackObj[obj.vendorName] = obj.finalFGPrice?obj.finalFGPrice:"NA";
+                        nfaPackObj[obj.vendorName] = obj.finalFGPrice ? obj.finalFGPrice : "NA";
                     }
                     nfaPackFinalData.push(nfaPackObj);
                 }
-                uniqueColumnData.push({columnName: "Last Purchase Price"});
-                uniqueColumnData.push({columnName: "MRP"});
+                uniqueColumnData.push({ columnName: "Last Purchase Price" });
+                uniqueColumnData.push({ columnName: "MRP" });
                 this.generateNFAPackWiseTable(nfaPackFinalData, uniqueColumnData);
             },
 
@@ -151,10 +158,10 @@ sap.ui.define([
                 oTable.setVisibleRowCount(nfaPricingData.length);
                 oTable.bindColumns("/columns", function (sId, oContext) {
                     var columnName = oContext.getObject().columnName;
-                    if(columnName == "MRP") {
+                    if (columnName == "MRP") {
                         template = new sap.m.Input({
-                            text: "{" + columnName + "}",
-                            wrapping: true
+                            id: "editableInput",
+                            value: "{" + columnName + "}"
                         })
                     } else {
                         template = new sap.m.Label({
@@ -199,14 +206,14 @@ sap.ui.define([
             // },
             // Calculate multi vendor pricing table columns and rows 
             showNFAPricingTable: function (cpcPackWiseData) {
-                var nfaPricincingColumns = [], nfaUniqueVendors=[];
+                var nfaPricincingColumns = [], nfaUniqueVendors = [];
                 var nfaPackObj = {}, nfaPackFinalData = [];
-                nfaPricincingColumns.push({columnName: "Vendor"});
+                nfaPricincingColumns.push({ columnName: "Vendor" });
                 //Get Column list
                 for (var item of cpcPackWiseData) {
                     if (!nfaPricincingColumns.includes(item.SKUName + "-Quantity") && !nfaPricincingColumns.includes(item.SKUName + "-Price")) {
-                        nfaPricincingColumns.push({columnName: item.SKUName + "-Quantity"});
-                        nfaPricincingColumns.push({columnName: item.SKUName + "-Price"});
+                        nfaPricincingColumns.push({ columnName: item.SKUName + "-Quantity" });
+                        nfaPricincingColumns.push({ columnName: item.SKUName + "-Price" });
                     }
                     if (!nfaUniqueVendors.includes(item.vendorName)) {
                         nfaUniqueVendors.push(item.vendorName);
@@ -224,19 +231,38 @@ sap.ui.define([
                     }
                 }
                 uniqueColumnData.unshift({ columnName: "Vendor" });
+                uniqueColumnData.unshift({ columnName: "Order" });
 
                 for (var i in nfaUniqueVendors) {
                     let nfaFilteredData = cpcPackWiseData.filter(function (item) {
                         return item.vendorName == nfaUniqueVendors[i];
                     });
+                    // let orderData = this.SKUVendorOrderonAverage.filter(function(item){
+                    //     return item[0].includes(nfaUniqueVendors[i]) && item[0].includes(this.nfaEvent);
+                    // }.bind(this));
                     nfaPackObj = {};
+                    nfaPackObj.Order = this.SKUVendorOrderonAverage[nfaUniqueVendors[i] + "(" + this.nfaEvent + ")"];
                     for (let obj of nfaFilteredData) {
                         nfaPackObj.Vendor = obj.vendorName;
-                        nfaPackObj[obj.SKUName + "-Quantity"] = obj.finalQuantity?obj.finalQuantity:"NA";
-                        nfaPackObj[obj.SKUName + "-Price"] = obj.finalFGPrice?obj.finalFGPrice:"NA";
+                        nfaPackObj[obj.SKUName + "-Quantity"] = obj.finalQuantity ? obj.finalQuantity : "NA";
+                        nfaPackObj[obj.SKUName + "-Price"] = obj.finalFGPrice ? obj.finalFGPrice : "NA";
                     }
                     nfaPackFinalData.push(nfaPackObj);
                 }
+
+                //Sort data based on the Order
+                nfaPackFinalData.sort((a, b) => {
+                    let fa = a.Order.toLowerCase(),
+                        fb = b.Order.toLowerCase();
+
+                    if (fa < fb) {
+                        return -1;
+                    }
+                    if (fa > fb) {
+                        return 1;
+                    }
+                    return 0;
+                });
                 this.generateNFAMultiVendorTable(nfaPackFinalData, uniqueColumnData, "nfaMultiVendorTable1");
             },
 
@@ -484,7 +510,8 @@ sap.ui.define([
                     { id: "otherExpenses", name: "Misc." },
                     { id: "cashDiscount", name: "Cash Discount in %" }
                 ];
-                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {}, cashDiscountData, nfaVendorCashDisc = {};
+                var productCostObj, productTotalCost = {}, productSKUAveragePriceCD = {},
+                    cashDiscountData, nfaVendorCashDisc = {};
                 // productSKUAveragePriceCD.itemTitle = "Average Price with CD";
                 //  productTotalCost.itemTitle = "TOTAL-- Rs./Lt";
                 productSKUAveragePriceCD.Particulars = "Average Price with CD";
@@ -537,7 +564,36 @@ sap.ui.define([
 
                 }
                 skuPackingData.push(productSKUAveragePriceCD);
-                //console.log(productSKUAveragePriceCD);
+
+                // Calculate Vendor order based on Average Price on Cash Discount -- start
+                this.SKUVendorOrderonAverage = {};
+                let arrSKUVendorOrderonAverage = [];
+                this.SKUVendorOrderonAverage.Particulars = "Order";
+
+                for (let vendor in productSKUAveragePriceCD) {
+                    if (vendor.includes(this.nfaEvent)) {
+                        arrSKUVendorOrderonAverage.push([vendor, productSKUAveragePriceCD[vendor]]);
+                    } else {
+                        arrSKUVendorOrderonAverage.push([vendor, "NA"]);
+                    }
+                }
+                arrSKUVendorOrderonAverage.sort(function (a, b) {
+                    return a[1] - b[1];
+                });
+                let count = 0;
+                arrSKUVendorOrderonAverage.forEach(function (item) {
+                    if (item[1] !== "NA") {
+                        count++;
+                        this.SKUVendorOrderonAverage[item[0]] = "L" + count;
+                        item[2] = "L" + count;
+                    } else {
+                        this.SKUVendorOrderonAverage[item[0]] = ""; // Order is not relavent for the previous events
+                        item[2] = "NA";
+                    }
+                }.bind(this))
+                skuPackingData.push(this.SKUVendorOrderonAverage);
+                //console.log(this.SKUVendorOrderonAverage);
+                // Order List --end
                 finalData.ComparativeAnalysis.splice((finalData.ComparativeAnalysis.length - 1), 0, productTotalCost);
 
                 // Logic for the SKU clause fields
@@ -609,7 +665,7 @@ sap.ui.define([
                 //#endregion - Temp fix for currency format
 
                 this.nfaVersionForCS = finalData.ComparativeAnalysis;
-                console.log(this.nfaProductClauseTable);
+                //console.log(this.nfaProductClauseTable);
 
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("comparativeTable");
@@ -765,12 +821,19 @@ sap.ui.define([
                     oDialog.getTableAsync().then(function (oTable) {
 
                         //oTable.setModel(this.oProductsModel);
-
+                        let aFilters = [];
+                        aFilters.push(new Filter({
+                            filters: [
+                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.byId("idInputRFQNumber").getValue() }),
+                            ],
+                            and: true
+                        }));
                         // For Desktop and tabled the default table is sap.ui.table.Table
                         if (oTable.bindRows) {
                             // Bind rows to the ODataModel and add columns
                             oTable.bindAggregation("rows", {
                                 path: "/RFQEvents",
+                                filters: aFilters,
                                 events: {
                                     dataReceived: function () {
                                         oDialog.update();
@@ -857,13 +920,13 @@ sap.ui.define([
             onRFQValueHelpDialogClose: function (oEvent) {
                 var sDescription,
                     oSelectedItem = oEvent.getParameter("selectedItem");
-                oEvent.getSource().getBinding("items").filter([]);
+                //oEvent.getSource().getBinding("items").filter([]);
 
                 if (!oSelectedItem) {
                     return;
                 }
 
-                sDescription = oSelectedItem.getDescription();
+                sDescription = oSelectedItem.getTitle();
 
                 this.byId("rfqInput").setSelectedKey(sDescription);
                 //this.byId("selectedKeyIndicator").setText(sDescription);
@@ -879,12 +942,58 @@ sap.ui.define([
 
             // Function triggers after change of filters
             onItemsFiltered: function (oEvent) {
-                this.selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
+                let selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
+                this.selectedEvents = [];
+                //let rfqNumber = this.getView().byId("rfqInput").getValue();
+                let filters = "?$filter=";
+                for (let i = 0; i < selectedEvents.length; i++) {
+                    filters = i ? filters + " or eventID eq '" + selectedEvents[i].getKey() + "'" : filters + "eventID eq '" + selectedEvents[i].getKey() + "'";
+                    this.selectedEvents.push(selectedEvents[i].getKey());
+                }
+                var url = "./comparative-analysis/RFQEventCompDetails" + filters;
+
+                //Filters to be passed based on the selectedEvents
+                $.get({
+                    url: url, //"./comparative-analysis/RFQEventCompDetails",
+                    success: function (resp) {
+                        if (resp.value.length > 0) {
+                            this.rfqItemsWithoutSum = resp.value;
+                            this.showComparativeTable(resp.value);
+                        }
+
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                //this.getNFAPricingTableData();
+                this.addSalesSummary();
+
+                var nfaModel = new JSONModel();
+                this.getView().setModel(nfaModel, "nfaModel");
+                // this.nfaData = {
+                // };
+                this.nfaEvent = this.selectedEvents.slice(-1)[0];
+                //this.readNFAData(rfqNumber, this.nfaEvent);
+
             },
 
             handleNFASave: function () {
                 var sData = this.getView().getModel("nfaModel").getProperty("/");
-                var sData1 = JSON.parse(JSON.stringify(sData));
+                var finalData = JSON.parse(JSON.stringify(sData));
+                // Collect SKU with MRP Data
+                let packWiseTableRows = this.getView().byId("nfaPackWiseTable").getRows();
+                let objSKUMRPDetails = {}, arrSKUMRPDetails = [];
+                for (let item of packWiseTableRows) {
+                    objSKUMRPDetails = {};
+                    objSKUMRPDetails.SKUName = item.getCells()[0].getText();
+                    objSKUMRPDetails.eventID = this.nfaEvent;
+                    objSKUMRPDetails.Ebeln = "7000000026"; //this.rfqNumber;
+                    objSKUMRPDetails.MRP = item.getCells()[5].getValue();
+                    arrSKUMRPDetails.push(objSKUMRPDetails);
+                }
+                finalData.cpcSkuMRPDetais = arrSKUMRPDetails;
+
                 var settings = {
                     async: false,
                     url: "/comparative-analysis/cpcNFADetails",
@@ -894,9 +1003,9 @@ sap.ui.define([
                         // "X-CSRF-Token": token
                     },
                     processData: false,
-                    data: JSON.stringify(sData1)
+                    data: JSON.stringify(finalData)
                 };
-                //this.getView().setBusy(true);
+                this.getView().setBusy(true);
                 $.ajax(settings)
                     .done(function (response) {
                         this.getView().setBusy(false);
@@ -1188,9 +1297,16 @@ sap.ui.define([
                 })
             },
 
+            //Event will be triggered on icon tab bar selection change
             onITBSelectionChange: function (oEvent) {
                 let key = oEvent.getSource().getSelectedKey();
                 if (key == "nfatemplate") {
+                    let rfqNumber = "7000000026"; //Temp -should be deleted.
+                    //let rfqNumber = this.getView().byId("rfqInput").getValue();
+                    let nfaData = this.getView().getModel("nfaModel").getProperty("/");
+                    if (Object.keys(nfaData).length === 0 && nfaData.constructor === Object) {
+                        this.readNFAData(rfqNumber, this.nfaEvent);
+                    }
                     this.getView().byId("printPDF").setVisible(true);
                     this.getView().byId("page").setShowFooter(true);
                 } else {
