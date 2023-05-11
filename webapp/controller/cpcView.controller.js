@@ -1039,11 +1039,12 @@ sap.ui.define([
                 const nfaOtherData = this.getView().getModel("nfaModel").getProperty("/"); // Other details like Qunatity, Payment Plan, Justification
                 const nfaProductClauseTable = this.nfaProductClauseTable; // This for the Cash Discount, gst and credit days table 
                 const nfaPackWisePrice = this.nfaPackWisePrice; // Pack Wise Table. In case columns are required seperately refer function-> showNFAPackWisePrice
+                
                 // NFA fields
                 const currentDate = new Date().toLocaleDateString("en-GB");
                 const subject = "Ariba Event Subject";
 
-                const data = {
+                const tempData = {
                     purchaseSalesSummary: {
                         columns: [{
                             field: "summary",
@@ -1063,30 +1064,6 @@ sap.ui.define([
                         }],
                         listing: [{ summary: "Sales Plan", fy: "22-23", qty: 245, purchaseSummary: "Stock Price on 01.02.22", rsLt: 188 }, { summary: " Stock as on", fy: "4/1/2022", qty: 569, purchaseSummary: "Purchase Price22-23", rsLt: 220 }, { summary: "Sales Plan", fy: "22-23", qty: 245, purchaseSummary: "Stock Price on 01.02.22", rsLt: 188 }, { summary: " Stock as on", fy: "4/1/2022", qty: 569, purchaseSummary: "Purchase Price22-23", rsLt: 220 }, { summary: "Sales Plan", fy: "22-23", qty: 245, purchaseSummary: "Stock Price on 01.02.22", rsLt: 188 }, { summary: " Stock as on", fy: "4/1/2022", qty: 569, purchaseSummary: "Purchase Price22-23", rsLt: 220 }]
                     },
-                    packWisePrice: {
-                        columns: [{
-                            field: "packSize",
-                            label: "Pack Size/Price"
-                        }, {
-                            field: "sku1Vendor1",
-                            label: "SKU 1/Vendor 1"
-                        }, {
-                            field: "sku2Vendor1",
-                            label: "SKU 2/Vendor 1"
-                        }, {
-                            field: "sku1Vendor2",
-                            label: "SKU 1/Vendor 2"
-                        }, {
-                            field: "sku2Vendor2",
-                            label: "SKU2/Vendor 2"
-                        }],
-                        listing: [{ packSize: "Current Purchase", sku1Vendor1: "Auto Fetch from Ariba", sku2Vendor1: "Auto Fetch from Ariba", sku1Vendor2: "Auto Fetch from Ariba", sku2Vendor2: "Auto Fetch from Ariba" },
-                        { packSize: "Last Purchase", sku1Vendor1: "Auto Fetch from Ariba", sku2Vendor1: "Auto Fetch from Ariba", sku1Vendor2: "Auto Fetch from Ariba", sku2Vendor2: "Auto Fetch from Ariba" },
-                        { packSize: "MRP( Rs/LT)", sku1Vendor1: "Auto Fetch from Ariba", sku2Vendor1: "Auto Fetch from Ariba", sku1Vendor2: "Auto Fetch from Ariba", sku2Vendor2: "Auto Fetch from Ariba" }]
-                    },
-                    gst: "Extra as applicable, presently @ 18%",
-                    creditPeriod: "90 days",
-                    cashDiscount: "3% in lieu of credit days on basic invoice...",
                     packingQuality: "Quality of product as well as packing shall be as per specifications of BIS/IS quality is not meeting with the requirements, material will be returned to the concern supplier with all attendant costs to their account.",
                     productTesting: "Product shall be tested at NABL accredited laboratory, or any other government approved & recognized lab and the reports shall be acceptable to both of us.  In the event of product failure, we shall return the product to the Supplier with all attendant costs to their account.  Also, cost of deficiency in the active ingredients or any other component of the product for the used quantities will be recovered from the Supplier for the quantities accepted by CFCL.",
                     otherTerms: "As per our Purchase Indent to follow.",
@@ -1138,11 +1115,11 @@ sap.ui.define([
                             <table border="1" style="${tableStyle}">
                                 <thead>
                                     <tr>
-                                        ${data.purchaseSalesSummary.columns.reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr.label}</th>`, "")}
+                                        ${tempData.purchaseSalesSummary.columns.reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr.label}</th>`, "")}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                        ${data.purchaseSalesSummary.listing.reduce((acc, cellData) => acc += `<tr>${data.purchaseSalesSummary.columns.reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column.field]}</td>`, "")}</tr>`, "")}
+                                        ${tempData.purchaseSalesSummary.listing.reduce((acc, cellData) => acc += `<tr>${tempData.purchaseSalesSummary.columns.reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column.field]}</td>`, "")}</tr>`, "")}
                                 </tbody>
                             </table>
                         </div>
@@ -1173,27 +1150,14 @@ sap.ui.define([
                         <!-- Pack Wise Price table -->
                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer)">
                             <h4 style="margin: 0">Pack Wise Price</h4>
-                            <!--
                             <table border="1" style="${tableStyle}">
                                 <thead>
                                     <tr>
-                                        ${getKeys(nfapackingTable).reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
+                                        ${getKeys(nfaPackWisePrice).reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                        ${nfapackingTable.reduce((acc, cellData) => acc += `<tr>${getKeys(nfapackingTable).reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
-                                </tbody>
-                            </table>
-                            -->
-                            <!-- This is an dummy data. Remove this code after getting original data -->
-                            <table border="1" style="${tableStyle}">
-                                <thead>
-                                    <tr>
-                                        ${data.packWisePrice.columns.reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr.label}</th>`, "")}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                        ${data.packWisePrice.listing.reduce((acc, cellData) => acc += `<tr>${data.packWisePrice.columns.reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column.field] || "-"}</td>`, "")}</tr>`, "")}
+                                        ${nfaPackWisePrice.reduce((acc, cellData) => acc += `<tr>${getKeys(nfaPackWisePrice).reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
                                 </tbody>
                             </table>
                         </div>
@@ -1222,11 +1186,11 @@ sap.ui.define([
         
                             <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Payment Plan:</span> <span style="font-weight: 200;">${nfaOtherData.paymentPlan}</span></h4>
         
-                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Packing / Quality:</span> <span style="font-weight: 200;">${data.packingQuality}</span></h4>
+                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Packing / Quality:</span> <span style="font-weight: 200;">${tempData.packingQuality}</span></h4>
         
-                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Product Testing:</span> <span style="font-weight: 200;">${data.productTesting}</span></h4>
+                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Product Testing:</span> <span style="font-weight: 200;">${tempData.productTesting}</span></h4>
         
-                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Other standard Terms:</span> <span style="font-weight: 200;">${data.otherTerms}</span></h4>
+                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Other standard Terms:</span> <span style="font-weight: 200;">${tempData.otherTerms}</span></h4>
                         </div>
         
                         <!--Dynamic Text field 3-->
