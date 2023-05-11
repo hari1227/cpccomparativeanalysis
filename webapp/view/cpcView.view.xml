@@ -145,13 +145,13 @@
                                     <Input value = "{nfaModel>/quantity}" editable="false"/>
                                     <core:Title/>
                                     <Label text="Payment Plan" />
-                                    <Input value = "{nfaModel>/paymentPlan}"/>
+                                    <TextArea value = "{nfaModel>/paymentPlan}"/>
 
                                 </form:content>
                             </form:SimpleForm>
                             <VBox >
                                 <Label text="Justification" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
+                                <rte:RichTextEditor id="_IDGenRichTextEditor1" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
                                 </rte:RichTextEditor>
                             </VBox>
                             <!-- <VBox>
@@ -168,7 +168,7 @@
                             </VBox>
                             <VBox >
                                 <Label text="Purchase Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
-                                <rte:RichTextEditor editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
+                                <rte:RichTextEditor id="_IDGenRichTextEditor2" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
                                 </rte:RichTextEditor>
                             </VBox>
                         </IconTabFilter>
