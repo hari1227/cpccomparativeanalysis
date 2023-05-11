@@ -34,8 +34,9 @@
                         </filterbar:FilterGroupItem>
                         <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
                             <filterbar:control>
-                                <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested">
-                                    <suggestionColumns>
+                                <!-- <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested"> -->
+                                    <MultiInput id="RFQEventFilterValueHelp" valueHelpRequest=".onValueHelpRequested">
+                                    <!-- <suggestionColumns>
                                         <Column>
                                             <Label text="RFQ"/>
                                         </Column>
@@ -52,7 +53,7 @@
                                             <Label text="{internalId}" />
                                             <Label text="{title}" />
                                         </ColumnListItem>
-                                    </suggestionRows>
+                                    </suggestionRows> -->
                                 </MultiInput>
 
                             </filterbar:control>
@@ -185,8 +186,8 @@
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
             <Button id="syncRFQEvents" type="Emphasized" text="Sync RFQ Events" press="handleSyncRFQEvent"/>
-            <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint"/>
-            <Button id="savePDF" text="Save NFA" press="handleNFASave"/>
+            <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
+            <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>
 

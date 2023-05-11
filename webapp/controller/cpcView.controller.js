@@ -26,36 +26,36 @@ sap.ui.define([
                 let appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
                 let appPath = appId.replaceAll(".", "/");
                 this.appModulePath = jQuery.sap.getModulePath(appPath);
-                this.selectedEvents = ["Doc648087602", "Doc652480915"];
-                this.nfaEvent = this.selectedEvents.slice(-1)[0];
-                let filters = "?$filter=";
-                for (let i = 0; i < this.selectedEvents.length; i++) {
-                    filters = i ? filters + " or eventID eq '" + this.selectedEvents[i] + "'" : filters + "eventID eq '" + this.selectedEvents[i] + "'";
-                }
-                var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
+                // this.selectedEvents = ["Doc648087602", "Doc652480915"];
+                // this.nfaEvent = this.selectedEvents.slice(-1)[0];
+                // let filters = "?$filter=";
+                // for (let i = 0; i < this.selectedEvents.length; i++) {
+                //     filters = i ? filters + " or eventID eq '" + this.selectedEvents[i] + "'" : filters + "eventID eq '" + this.selectedEvents[i] + "'";
+                // }
+                // var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
 
-                //Filters to be passed based on the selectedEvents
-                $.get({
-                    url: url, //"./comparative-analysis/RFQEventCompDetails",
-                    success: function (resp) {
-                        this.rfqItemsWithoutSum = resp.value;
-                        this.showComparativeTable(resp.value);
-                        // Backend call to get all the items sumed at vendor, event and sku level
-                        // $.get({
-                        //     url: "./comparative-analysis/RFQEventCompDetailsProj",
-                        //     success: function (resp) {
-                        //         this.showComparativeTable(resp.value);
-                        //     }.bind(this),
-                        //     error: function (error) {
-                        //         console.log(error);
-                        //     }
-                        // });
+                // //Filters to be passed based on the selectedEvents
+                // $.get({
+                //     url: url, //"./comparative-analysis/RFQEventCompDetails",
+                //     success: function (resp) {
+                //         this.rfqItemsWithoutSum = resp.value;
+                //         this.showComparativeTable(resp.value);
+                //         // Backend call to get all the items sumed at vendor, event and sku level
+                //         // $.get({
+                //         //     url: "./comparative-analysis/RFQEventCompDetailsProj",
+                //         //     success: function (resp) {
+                //         //         this.showComparativeTable(resp.value);
+                //         //     }.bind(this),
+                //         //     error: function (error) {
+                //         //         console.log(error);
+                //         //     }
+                //         // });
 
-                    }.bind(this),
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
+                //     }.bind(this),
+                //     error: function (error) {
+                //         console.log(error);
+                //     }
+                // });
                 //this.getNFAPricingTableData();
                 this.addSalesSummary();
 
@@ -88,6 +88,7 @@ sap.ui.define([
                 $.ajax(settings)
                     .done(function (response) {
                         this.getView().getModel("nfaModel").setProperty("/", response.value[0]);
+                        this.getView().getModel("nfaModel").refresh();
                         this.showNFAPackWisePrice(response.value[0].cpcNFAPackWisePriceDetails);
                         this.showNFAPricingTable(response.value[0].cpcNFAPackWisePriceDetails);
                     }.bind(this)).fail(function () {
@@ -792,6 +793,7 @@ sap.ui.define([
                 // console.log(data);
                 oTable.setModel(packingModel);
                 oTable.bindItems("/", aColList);
+                this.readNFAData(this.getView().byId("rfqInput").getSelectedKey(), this.nfaEvent);
             },
 
             // #region Value Help Dialog standard use case with filter bar without filter suggestions
@@ -993,7 +995,7 @@ sap.ui.define([
                 // this.nfaData = {
                 // };
                 this.nfaEvent = this.selectedEvents.slice(-1)[0];
-                //this.readNFAData(rfqNumber, this.nfaEvent);
+                //this.readNFAData(this.getView().byId("rfqInput").getSelectedKey(), this.nfaEvent);
 
             },
 
@@ -1292,9 +1294,11 @@ sap.ui.define([
                     }
                     this.getView().byId("subject").setValue(this.nfaEventTitle);
                     this.getView().byId("printPDF").setVisible(true);
+                    this.getView().byId("savePDF").setVisible(true);
                     //this.getView().byId("page").setShowFooter(true);
                 } else {
                     this.getView().byId("printPDF").setVisible(false);
+                    this.getView().byId("savePDF").setVisible(false);
                     //this.getView().byId("page").setShowFooter(false);
                 }
             },
