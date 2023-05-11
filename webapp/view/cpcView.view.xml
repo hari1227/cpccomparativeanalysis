@@ -9,7 +9,7 @@
     xmlns:ui="sap.ui.table"
     xmlns:rte="sap.ui.richtexteditor">
 
-    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="false">
+    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
 
         <semantic:titleHeading>
             <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
@@ -181,7 +181,8 @@
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
-            <Button id="printPDF" text="Print NFA" press="onNFAPrint"/>
+            <Button id="syncRFQEvents" type="Emphasized" text="Sync RFQ Events" press="handleSyncRFQEvent"/>
+            <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint"/>
             <Button id="savePDF" text="Save NFA" press="handleNFASave"/>
         </semantic:footerCustomActions>
     </semantic:SemanticPage>

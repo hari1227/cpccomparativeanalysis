@@ -1277,11 +1277,15 @@ sap.ui.define([
                         this.readNFAData(rfqNumber, this.nfaEvent);
                     }
                     this.getView().byId("printPDF").setVisible(true);
-                    this.getView().byId("page").setShowFooter(true);
+                    //this.getView().byId("page").setShowFooter(true);
                 } else {
                     this.getView().byId("printPDF").setVisible(false);
-                    this.getView().byId("page").setShowFooter(false);
+                    //this.getView().byId("page").setShowFooter(false);
                 }
+            },
+
+            handleSyncRFQEvent: function(oEvent) {
+
             }
         });
     });
