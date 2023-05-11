@@ -139,13 +139,16 @@
                                     <core:Title/>
                                    <!-- <Label text="Cash Discount" />
                                     <Input value = ""/> -->
-                                    <Label text="Delivery" class="sapUiTinyMarginBegin"/>
-                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
+                                    <Label text="Subject" class="sapUiTinyMarginBegin"/>
+                                    <Input id="subject" editable="true"/>
                                     <Label text="Quantity" />
                                     <Input value = "{nfaModel>/quantity}" editable="false"/>
                                     <core:Title/>
                                     <Label text="Payment Plan" />
                                     <TextArea value = "{nfaModel>/paymentPlan}"/>
+                                    <Label text="Delivery" class="sapUiTinyMarginBegin"/>
+                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
+                                    <Label text="Quantity" />
 
                                 </form:content>
                             </form:SimpleForm>

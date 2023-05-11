@@ -76,7 +76,7 @@ sap.ui.define([
                 // var token = this.fetchToken();
                 var settings = {
                     async: true,
-                    url: this.appModulePath + "./comparative-analysis/getcpcNfaDetails",
+                    url: this.appModulePath + "/comparative-analysis/getcpcNfaDetails",
                     method: "POST",
                     headers: {
                         "content-type": "application/json"
@@ -93,6 +93,18 @@ sap.ui.define([
                     }.bind(this)).fail(function () {
 
                     });
+                
+                let urlFilter = "?$filter=Ebeln_Ebeln eq '"+ rfqNumber + "'" + " and internalId eq '" + eventId + "'"; 
+                $.get({
+                    url: this.appModulePath + "/comparative-analysis/RFQEvents" + urlFilter, //"./comparative-analysis/RFQEventCompDetails",
+                    success: function (resp) {
+                        this.nfaEventTitle = resp.value[0].title; 
+
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
 
             },
             // Calcualtion for pack wise data in NFA
@@ -673,6 +685,7 @@ sap.ui.define([
 
                 // Create a Table for ComparativeAnalysis
                 var oTable = this.getView().byId("comparativeTable");
+                oTable.destroyColumns();
                 var columnName;
                 for (var j = 0; j < vendorList.length; j++) {
                     if (j == 0) {
@@ -680,7 +693,7 @@ sap.ui.define([
                     } else {
                         columnName = vendorList[j].vendorName + "(" + vendorList[j].eventID + ")";
                     }
-                    var oColumn = new sap.m.Column("col" + j, {
+                    var oColumn = new sap.m.Column( {
 
                         header: new sap.m.Label({
                             text: columnName,
@@ -704,7 +717,7 @@ sap.ui.define([
                     });
                     oCell.push(cell1);
                 }
-                var aColList = new sap.m.ColumnListItem("aColList", {
+                var aColList = new sap.m.ColumnListItem( {
                     cells: oCell
                 });
                 var jsonModel = new JSONModel(finalData);
@@ -737,6 +750,7 @@ sap.ui.define([
                 // add plan here
                 vendorList.splice(1, 0, { "vendorName": 'PLAN' });
                 var oTable = this.getView().byId("packagingTable");
+                oTable.destroyColumns();
                 var columnName;
                 for (var j = 0; j < vendorList.length; j++) {
                     if (j == 0) {
@@ -829,7 +843,7 @@ sap.ui.define([
                         let aFilters = [];
                         aFilters.push(new Filter({
                             filters: [
-                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getValue() }),
+                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getSelectedKey() }),
                             ],
                             and: true
                         }));
@@ -1276,6 +1290,7 @@ sap.ui.define([
                     if (Object.keys(nfaData).length === 0 && nfaData.constructor === Object) {
                         this.readNFAData(rfqNumber, this.nfaEvent);
                     }
+                    this.getView().byId("subject").setValue(this.nfaEventTitle);
                     this.getView().byId("printPDF").setVisible(true);
                     this.getView().byId("page").setShowFooter(true);
                 } else {
