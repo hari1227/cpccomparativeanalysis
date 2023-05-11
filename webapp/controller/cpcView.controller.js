@@ -23,14 +23,16 @@ sap.ui.define([
                 //         this.showComparativeTable(resp.results);
                 //     }.bind(this)
                 // });
-
+                let appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
+                let appPath = appId.replaceAll(".", "/");
+                this.appModulePath = jQuery.sap.getModulePath(appPath);
                 this.selectedEvents = ["Doc648087602", "Doc652480915"];
                 this.nfaEvent = this.selectedEvents.slice(-1)[0];
                 let filters = "?$filter=";
                 for (let i = 0; i < this.selectedEvents.length; i++) {
                     filters = i ? filters + " or eventID eq '" + this.selectedEvents[i] + "'" : filters + "eventID eq '" + this.selectedEvents[i] + "'";
                 }
-                var url = "./comparative-analysis/RFQEventCompDetails" + filters;
+                var url = this.appModulePath + "./comparative-analysis/RFQEventCompDetails" + filters;
 
                 //Filters to be passed based on the selectedEvents
                 $.get({
@@ -74,7 +76,7 @@ sap.ui.define([
                 // var token = this.fetchToken();
                 var settings = {
                     async: true,
-                    url: "./comparative-analysis/getcpcNfaDetails",
+                    url: this.appModulePath + "./comparative-analysis/getcpcNfaDetails",
                     method: "POST",
                     headers: {
                         "content-type": "application/json"
@@ -138,6 +140,8 @@ sap.ui.define([
                 uniqueColumnData.push({ columnName: "Last Purchase Price" });
                 uniqueColumnData.push({ columnName: "MRP" });
                 this.generateNFAPackWiseTable(nfaPackFinalData, uniqueColumnData);
+                // this.nfaPackWiseColumns = uniqueColumnData;
+                // this.nfaPackWiseData = nfaPackFinalData;
             },
 
             // Create and bind multi vendor table in NFA template
@@ -784,6 +788,7 @@ sap.ui.define([
                         name: "cpccomparativeanalysis.view.RFQValueHelp"
                     });
                 }
+                var rfqNumber = 
                 this.pDialog.then(function (oDialog) {
                     var oFilterBar = oDialog.getFilterBar();
                     this._oVHD = oDialog;
@@ -824,7 +829,7 @@ sap.ui.define([
                         let aFilters = [];
                         aFilters.push(new Filter({
                             filters: [
-                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.byId("idInputRFQNumber").getValue() }),
+                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getValue() }),
                             ],
                             and: true
                         }));
@@ -950,7 +955,7 @@ sap.ui.define([
                     filters = i ? filters + " or eventID eq '" + selectedEvents[i].getKey() + "'" : filters + "eventID eq '" + selectedEvents[i].getKey() + "'";
                     this.selectedEvents.push(selectedEvents[i].getKey());
                 }
-                var url = "./comparative-analysis/RFQEventCompDetails" + filters;
+                var url = this.appModulePath + "./comparative-analysis/RFQEventCompDetails" + filters;
 
                 //Filters to be passed based on the selectedEvents
                 $.get({
@@ -996,7 +1001,7 @@ sap.ui.define([
 
                 var settings = {
                     async: false,
-                    url: "/comparative-analysis/cpcNFADetails",
+                    url: this.appModulePath + "/comparative-analysis/cpcNFADetails",
                     method: "POST",
                     headers: {
                         "content-type": "application/json"
