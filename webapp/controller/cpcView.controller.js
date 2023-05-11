@@ -32,7 +32,7 @@ sap.ui.define([
                 for (let i = 0; i < this.selectedEvents.length; i++) {
                     filters = i ? filters + " or eventID eq '" + this.selectedEvents[i] + "'" : filters + "eventID eq '" + this.selectedEvents[i] + "'";
                 }
-                var url = this.appModulePath + "./comparative-analysis/RFQEventCompDetails" + filters;
+                var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
 
                 //Filters to be passed based on the selectedEvents
                 $.get({
@@ -969,7 +969,7 @@ sap.ui.define([
                     filters = i ? filters + " or eventID eq '" + selectedEvents[i].getKey() + "'" : filters + "eventID eq '" + selectedEvents[i].getKey() + "'";
                     this.selectedEvents.push(selectedEvents[i].getKey());
                 }
-                var url = this.appModulePath + "./comparative-analysis/RFQEventCompDetails" + filters;
+                var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
 
                 //Filters to be passed based on the selectedEvents
                 $.get({
