@@ -1060,10 +1060,10 @@ sap.ui.define([
                 const nfaOtherData = this.getView().getModel("nfaModel").getProperty("/"); // Other details like Qunatity, Payment Plan, Justification
                 const nfaProductClauseTable = this.nfaProductClauseTable; // This for the Cash Discount, gst and credit days table 
                 const nfaPackWisePrice = this.nfaPackWisePrice; // Pack Wise Table. In case columns are required seperately refer function-> showNFAPackWisePrice
-                this.getView().byId("subject").getValue(); // Subject field
+                const subject = this.getView().byId("subject").getValue(); // Subject field
+                
                 // NFA fields
                 const currentDate = new Date().toLocaleDateString("en-GB");
-                const subject = "Ariba Event Subject";
 
                 const tempData = {
                     purchaseSalesSummary: {
