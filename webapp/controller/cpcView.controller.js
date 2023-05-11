@@ -1158,11 +1158,11 @@ sap.ui.define([
                             <table border="1" style="${tableStyle}">
                                 <thead>
                                     <tr>
-                                        ${getKeys(nfaPackWisePrice).reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
+                                        ${getKeys(nfaPackWisePrice, "Vendor").reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                        ${nfaPackWisePrice.reduce((acc, cellData) => acc += `<tr>${getKeys(nfaPackWisePrice).reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
+                                        ${nfaPackWisePrice.reduce((acc, cellData) => acc += `<tr>${getKeys(nfaPackWisePrice, "Vendor").reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
                                 </tbody>
                             </table>
                         </div>
