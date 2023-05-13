@@ -25,7 +25,7 @@
                                 <!-- <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
                                     <core:Item id="RFQFilterItems" key="{Ebeln}" text="{Ebeln}"/>
                                 </ComboBox> -->
-                                <Input id="rfqInput" textFormatMode="KeyValue" placeholder="Enter RFQ" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onRFQValueHelpRequest" suggestionItems="{/RFQList}" suggestionItemSelected=".onSuggestionItemSelected">
+                                <Input id="rfqInput" textFormatMode="KeyValue" placeholder="Enter RFQ" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onRFQValueHelpRequest" suggestionItems="{path: '/RFQList', filters: [{path: 'Department', operator: 'EQ', value1: 'CPC'}]}" suggestionItemSelected=".onSuggestionItemSelected">
                                     <suggestionItems>
                                         <core:ListItem key="{Ebeln}" text="{Ebeln}" />
                                     </suggestionItems>

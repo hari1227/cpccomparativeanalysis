@@ -2,7 +2,7 @@
 	<SelectDialog
 		id="selectDialog"
 		title="Products"
-		items="{/RFQList}"
+		items="{path: '/RFQList', filters: [{path: 'Department', operator: 'EQ', value1: 'CPC'}]}"
 		search=".onRFQValueHelpDialogSearch"
 		confirm=".onRFQValueHelpDialogClose"
 		cancel=".onRFQValueHelpDialogClose">

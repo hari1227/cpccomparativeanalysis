@@ -940,7 +940,7 @@ sap.ui.define([
                 }
                 this._pValueHelpDialog.then(function (oDialog) {
                     // Create a filter for the binding
-                    oDialog.getBinding("items").filter([new Filter("Ebeln", FilterOperator.Contains, sInputValue)]);
+                    oDialog.getBinding("items").filter([new Filter("Department", FilterOperator.Contains, "CPC")]);
                     // Open ValueHelpDialog filtered by the input's value
                     oDialog.open(sInputValue);
                 });
