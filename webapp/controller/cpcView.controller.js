@@ -94,12 +94,12 @@ sap.ui.define([
                     }.bind(this)).fail(function () {
 
                     });
-                
-                let urlFilter = "?$filter=Ebeln_Ebeln eq '"+ rfqNumber + "'" + " and internalId eq '" + eventId + "'"; 
+
+                let urlFilter = "?$filter=Ebeln_Ebeln eq '" + rfqNumber + "'" + " and internalId eq '" + eventId + "'";
                 $.get({
                     url: this.appModulePath + "/comparative-analysis/RFQEvents" + urlFilter, //"./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
-                        this.nfaEventTitle = resp.value[0].title; 
+                        this.nfaEventTitle = resp.value[0].title;
                         this.getView().byId("subject").setValue(resp.value[0].title);
                     }.bind(this),
                     error: function (error) {
@@ -694,7 +694,7 @@ sap.ui.define([
                     } else {
                         columnName = vendorList[j].vendorName + "(" + vendorList[j].eventID + ")";
                     }
-                    var oColumn = new sap.m.Column( {
+                    var oColumn = new sap.m.Column({
 
                         header: new sap.m.Label({
                             text: columnName,
@@ -718,7 +718,7 @@ sap.ui.define([
                     });
                     oCell.push(cell1);
                 }
-                var aColList = new sap.m.ColumnListItem( {
+                var aColList = new sap.m.ColumnListItem({
                     cells: oCell
                 });
                 var jsonModel = new JSONModel(finalData);
@@ -804,96 +804,96 @@ sap.ui.define([
                         name: "cpccomparativeanalysis.view.RFQValueHelp"
                     });
                 }
-                var rfqNumber = 
-                this.pDialog.then(function (oDialog) {
-                    var oFilterBar = oDialog.getFilterBar();
-                    this._oVHD = oDialog;
-                    // Initialise the dialog with model only the first time. Then only open it
-                    if (this._bDialogInitialized) {
-                        // Re-set the tokens from the input and update the table
-                        oDialog.setTokens([]);
+                var rfqNumber =
+                    this.pDialog.then(function (oDialog) {
+                        var oFilterBar = oDialog.getFilterBar();
+                        this._oVHD = oDialog;
+                        // Initialise the dialog with model only the first time. Then only open it
+                        if (this._bDialogInitialized) {
+                            // Re-set the tokens from the input and update the table
+                            oDialog.setTokens([]);
+                            //oDialog.setTokens(this._oMultiInput.getTokens());
+                            oDialog.update();
+
+                            oDialog.open();
+                            return;
+                        }
+                        this.getView().addDependent(oDialog);
+
+                        // Set key fields for filtering in the Define Conditions Tab
+                        oDialog.setRangeKeyFields([{
+                            label: "Internal ID",
+                            key: "internalId",
+                            type: "string",
+                            typeInstance: new TypeString({}, {
+                                maxLength: 7
+                            })
+                        }]);
+
+                        // Set Basic Search for FilterBar
+                        oFilterBar.setFilterBarExpanded(false);
+                        oFilterBar.setBasicSearch(this._oBasicSearchField);
+
+                        // Trigger filter bar search when the basic search is fired
+                        this._oBasicSearchField.attachSearch(function () {
+                            oFilterBar.search();
+                        });
+
+                        oDialog.getTableAsync().then(function (oTable) {
+
+                            //oTable.setModel(this.oProductsModel);
+                            let aFilters = [];
+                            aFilters.push(new Filter({
+                                filters: [
+                                    new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getSelectedKey() }),
+                                ],
+                                and: true
+                            }));
+                            // For Desktop and tabled the default table is sap.ui.table.Table
+                            if (oTable.bindRows) {
+                                // Bind rows to the ODataModel and add columns
+                                oTable.bindAggregation("rows", {
+                                    path: "/RFQEvents",
+                                    filters: aFilters,
+                                    events: {
+                                        dataReceived: function () {
+                                            oDialog.update();
+                                        }
+                                    }
+                                });
+                                oTable.addColumn(new UIColumn({ label: "RFQ", template: "Ebeln_Ebeln" }));
+                                oTable.addColumn(new UIColumn({ label: "Internal Id", template: "internalId" }));
+                                oTable.addColumn(new UIColumn({ label: "Title", template: "title" }));
+
+                            }
+
+                            // For Mobile the default table is sap.m.Table
+                            if (oTable.bindItems) {
+                                // Bind items to the ODataModel and add columns
+                                oTable.bindAggregation("items", {
+                                    path: "/RFQEvents",
+                                    template: new ColumnListItem({
+                                        cells: [new Label({ text: "{Ebeln_Ebeln}" }), new Label({ text: "{internalId}" }), new Label({ text: "{title}" })]
+                                    }),
+                                    events: {
+                                        dataReceived: function () {
+                                            oDialog.update();
+                                        }
+                                    }
+                                });
+                                oTable.addColumn(new MColumn({ header: new Label({ text: "RFQ" }) }));
+                                oTable.addColumn(new MColumn({ header: new Label({ text: "Internal ID" }) }));
+                                oTable.addColumn(new MColumn({ header: new Label({ text: "Title" }) }));
+                            }
+                            oDialog.update();
+                        }.bind(this));
+
                         //oDialog.setTokens(this._oMultiInput.getTokens());
-                        oDialog.update();
 
+                        // set flag that the dialog is initialized
+                        this._bDialogInitialized = true;
                         oDialog.open();
-                        return;
-                    }
-                    this.getView().addDependent(oDialog);
-
-                    // Set key fields for filtering in the Define Conditions Tab
-                    oDialog.setRangeKeyFields([{
-                        label: "Internal ID",
-                        key: "internalId",
-                        type: "string",
-                        typeInstance: new TypeString({}, {
-                            maxLength: 7
-                        })
-                    }]);
-
-                    // Set Basic Search for FilterBar
-                    oFilterBar.setFilterBarExpanded(false);
-                    oFilterBar.setBasicSearch(this._oBasicSearchField);
-
-                    // Trigger filter bar search when the basic search is fired
-                    this._oBasicSearchField.attachSearch(function () {
-                        oFilterBar.search();
-                    });
-
-                    oDialog.getTableAsync().then(function (oTable) {
-
-                        //oTable.setModel(this.oProductsModel);
-                        let aFilters = [];
-                        aFilters.push(new Filter({
-                            filters: [
-                                new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getSelectedKey() }),
-                            ],
-                            and: true
-                        }));
-                        // For Desktop and tabled the default table is sap.ui.table.Table
-                        if (oTable.bindRows) {
-                            // Bind rows to the ODataModel and add columns
-                            oTable.bindAggregation("rows", {
-                                path: "/RFQEvents",
-                                filters: aFilters,
-                                events: {
-                                    dataReceived: function () {
-                                        oDialog.update();
-                                    }
-                                }
-                            });
-                            oTable.addColumn(new UIColumn({ label: "RFQ", template: "Ebeln_Ebeln" }));
-                            oTable.addColumn(new UIColumn({ label: "Internal Id", template: "internalId" }));
-                            oTable.addColumn(new UIColumn({ label: "Title", template: "title" }));
-
-                        }
-
-                        // For Mobile the default table is sap.m.Table
-                        if (oTable.bindItems) {
-                            // Bind items to the ODataModel and add columns
-                            oTable.bindAggregation("items", {
-                                path: "/RFQEvents",
-                                template: new ColumnListItem({
-                                    cells: [new Label({ text: "{Ebeln_Ebeln}" }), new Label({ text: "{internalId}" }), new Label({ text: "{title}" })]
-                                }),
-                                events: {
-                                    dataReceived: function () {
-                                        oDialog.update();
-                                    }
-                                }
-                            });
-                            oTable.addColumn(new MColumn({ header: new Label({ text: "RFQ" }) }));
-                            oTable.addColumn(new MColumn({ header: new Label({ text: "Internal ID" }) }));
-                            oTable.addColumn(new MColumn({ header: new Label({ text: "Title" }) }));
-                        }
-                        oDialog.update();
                     }.bind(this));
-
-                    //oDialog.setTokens(this._oMultiInput.getTokens());
-
-                    // set flag that the dialog is initialized
-                    this._bDialogInitialized = true;
-                    oDialog.open();
-                }.bind(this));
             },
 
             onRFQSelection: function () {
@@ -1061,7 +1061,7 @@ sap.ui.define([
                 const nfaProductClauseTable = this.nfaProductClauseTable; // This for the Cash Discount, gst and credit days table 
                 const nfaPackWisePrice = this.nfaPackWisePrice; // Pack Wise Table. In case columns are required seperately refer function-> showNFAPackWisePrice
                 const subject = this.getView().byId("subject").getValue(); // Subject field
-                
+
                 // NFA fields
                 const currentDate = new Date().toLocaleDateString("en-GB");
 
@@ -1303,8 +1303,30 @@ sap.ui.define([
                 }
             },
 
-            handleSyncRFQEvent: function(oEvent) {
-
+            handleSyncRFQEvent: function (oEvent) {
+                if (this.getView().byId("rfqInput").getSelectedKey()) {
+                    var data = {
+                        "rfq": this.getView().byId("rfqInput").getSelectedKey()
+                    }
+                    // var token = this.fetchToken();
+                    var settings = {
+                        async: true,
+                        url: this.appModulePath + "/comparative-analysis/cpcStageEvents",
+                        method: "POST",
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        processData: false,
+                        data: JSON.stringify(data)
+                    };
+                    // this.getView().setBusy(true);
+                    $.ajax(settings)
+                        .done(function (response) {
+                            MessageBox.success("Successfully Events and awarded scenarios are synced");
+                        }.bind(this)).fail(function () {
+                            MessageBox.error(error.responseText);
+                        });
+                }
             }
         });
     });
