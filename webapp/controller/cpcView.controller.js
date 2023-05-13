@@ -26,6 +26,7 @@ sap.ui.define([
                 let appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
                 let appPath = appId.replaceAll(".", "/");
                 this.appModulePath = jQuery.sap.getModulePath(appPath);
+                this.selectedEvents = [];
                 // this.selectedEvents = ["Doc648087602", "Doc652480915"];
                 // this.nfaEvent = this.selectedEvents.slice(-1)[0];
                 // let filters = "?$filter=";
@@ -903,6 +904,18 @@ sap.ui.define([
             onValueHelpOkPress: function (oEvent) {
                 var aTokens = oEvent.getParameter("tokens");
                 this.getView().byId("RFQEventFilterValueHelp").setTokens(aTokens);
+
+                //
+                let selectedIndices = oEvent.getSource().getTable().getSelectedIndices();
+                for (let i of selectedIndices) {
+                    let selectedEventsData = oEvent.getSource().getTable().getContextByIndex(i).getObject();
+                    this.selectedEvents.push(selectedEventsData);
+                }
+                //Sort aEvents based on creation date
+                this.selectedEvents.sort(function (a, b) {
+                    return new Date(b.createDate) - new Date(a.createDate);
+                });
+                this.nfaEvent = this.selectedEvents[0].internalId;
                 this._oVHD.close();
             },
 
@@ -964,12 +977,12 @@ sap.ui.define([
             // Function triggers after change of filters
             onItemsFiltered: function (oEvent) {
                 let selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
-                this.selectedEvents = [];
+               // this.selectedEvents = [];
                 //let rfqNumber = this.getView().byId("rfqInput").getValue();
                 let filters = "?$filter=";
                 for (let i = 0; i < selectedEvents.length; i++) {
                     filters = i ? filters + " or eventID eq '" + selectedEvents[i].getKey() + "'" : filters + "eventID eq '" + selectedEvents[i].getKey() + "'";
-                    this.selectedEvents.push(selectedEvents[i].getKey());
+                   // this.selectedEvents.push(selectedEvents[i].getKey());
                 }
                 var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
 
@@ -994,7 +1007,7 @@ sap.ui.define([
                 this.getView().setModel(nfaModel, "nfaModel");
                 // this.nfaData = {
                 // };
-                this.nfaEvent = this.selectedEvents.slice(-1)[0];
+                //this.nfaEvent = this.selectedEvents.slice(-1)[0];
                 //this.readNFAData(this.getView().byId("rfqInput").getSelectedKey(), this.nfaEvent);
 
             },
