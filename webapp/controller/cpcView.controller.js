@@ -1023,10 +1023,10 @@ sap.ui.define([
                     objSKUMRPDetails.SKUName = item.getCells()[0].getText();
                     objSKUMRPDetails.eventID = this.nfaEvent;
                     objSKUMRPDetails.Ebeln = "7000000026"; //this.rfqNumber;
-                    objSKUMRPDetails.MRP = item.getCells()[5].getValue();
+                    objSKUMRPDetails.MRP = parseFloat(item.getCells()[5].getValue());
                     arrSKUMRPDetails.push(objSKUMRPDetails);
                 }
-                finalData.cpcSkuMRPDetais = arrSKUMRPDetails;
+                finalData.mrpDetails = arrSKUMRPDetails;
 
                 var settings = {
                     async: false,
