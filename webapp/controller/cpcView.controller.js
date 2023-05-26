@@ -481,7 +481,7 @@ sap.ui.define([
                     // PLAN = Sum of all the quantity of the unique product -> no used after discussion
                     //PLAN = Sum of all the quantity for each SKU based on the one vendor bid
                     productSKUData.PLAN = filteredData.filter(function (obj) {
-                        return vendorList[1].vendorMailId == obj.vendorMailId && self.selectedEvents[0] == obj.eventID;
+                        return vendorList[1].vendorMailId == obj.vendorMailId && self.selectedEvents[0].internalId == obj.eventID;
                     }).reduce(function (accumulator, object) {
                         // if(vendorList[1].vendorMailId == object.vendorMailId && self.selectedEvents[0] == object.eventID) {
                         return accumulator + object.quantity;
