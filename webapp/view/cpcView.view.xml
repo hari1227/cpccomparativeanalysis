@@ -1,0 +1,194 @@
+<mvc:View controllerName="cpccomparativeanalysis.controller.cpcView"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:filterbar = "sap.ui.comp.filterbar"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:ui="sap.ui.table"
+    xmlns:rte="sap.ui.richtexteditor">
+
+    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
+
+        <semantic:titleHeading>
+            <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
+        </semantic:titleHeading>
+
+        <semantic:content>
+
+            <VBox id="contentLayout">
+                <filterbar:FilterBar id="RFQFilter" search="onItemsFiltered">
+                    <filterbar:filterGroupItems>
+                        <filterbar:FilterGroupItem id="_IDGenFilterGroupItem1" groupName="RFQFilter" label="RFQ" name="Ebeln" partOfCurrentVariant="true" visibleInFilterBar="true">
+                            <filterbar:control>
+                                <!-- <ComboBox id="RFQFilterCombo" items="{ path: '/RFQList'}" selectionChange=".onRFQSelection">
+                                    <core:Item id="RFQFilterItems" key="{Ebeln}" text="{Ebeln}"/>
+                                </ComboBox> -->
+                                <Input id="rfqInput" textFormatMode="KeyValue" placeholder="Enter RFQ" showSuggestion="true" showValueHelp="true" valueHelpRequest=".onRFQValueHelpRequest" suggestionItems="{path: '/RFQList', filters: [{path: 'Department', operator: 'EQ', value1: 'CPC'}]}" suggestionItemSelected=".onSuggestionItemSelected">
+                                    <suggestionItems>
+                                        <core:ListItem key="{Ebeln}" text="{Ebeln}" />
+                                    </suggestionItems>
+                                </Input>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+                        <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
+                            <filterbar:control>
+                                <!-- <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested"> -->
+                                    <MultiInput id="RFQEventFilterValueHelp" valueHelpRequest=".onValueHelpRequested">
+                                    <!-- <suggestionColumns>
+                                        <Column>
+                                            <Label text="RFQ"/>
+                                        </Column>
+                                        <Column>
+                                            <Label text="Internal ID"/>
+                                        </Column>
+                                        <Column>
+                                            <Label text="Title"/>
+                                        </Column>
+                                    </suggestionColumns>
+                                    <suggestionRows>
+                                        <ColumnListItem>
+                                            <Label text="{Ebeln_Ebeln}" />
+                                            <Label text="{internalId}" />
+                                            <Label text="{title}" />
+                                        </ColumnListItem>
+                                    </suggestionRows> -->
+                                </MultiInput>
+
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+                    </filterbar:filterGroupItems>
+                </filterbar:FilterBar>
+
+                <IconTabBar id="comparativeAnalysis" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding" select="onITBSelectionChange">
+                    <items>
+                        <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
+                            <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
+                            <VBox >
+                                <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true" class="tableCSS">
+                                    <headerToolbar>
+                                        <OverflowToolbar id="_IDGenOverflowToolbar1">
+                                            <Title id="tableHeader" text="List" level="H3"/>
+                                            <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                                            <SearchField id="searchField" tooltip="Search here" search=".onSearch">
+                                                <layoutData>
+                                                    <OverflowToolbarLayoutData id="_IDGenOverflowToolbarLayoutData1" maxWidth="200px" priority="NeverOverflow"/>
+                                                </layoutData>
+                                            </SearchField>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <!-- Our code in the controller goes here -->
+                                </Table>
+                                <!-- </smartTable:SmartTable> -->
+                                <Table id="packagingTable" class="sapUiLargeMarginTop tableCSS" growing="true" growingScrollToLoad="true" 
+                                    alternateRowColors="false" backgroundDesign="Transparent" noDataText="Select Filters to show data in Table">
+                                </Table>
+                            </VBox>
+                        </IconTabFilter>
+                        <IconTabFilter id="summary" text="Sales/Purchase Summary" key="SS">
+                            <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
+                                <content>
+                                    <Table id="salesTable" items="{/SalesSummary}" >
+                                        <columns>
+                                            <Column id="nameColumn">
+                                                <Text text="Sales Summary" id="nameColumnTitle"/>
+                                            </Column>
+                                            <Column id="unitNumberColumn" hAlign="End">
+                                                <Text text="Quantity in KTL" id="unitNumberColumnTitle"/>
+                                            </Column>
+                                        </columns>
+
+                                        <items>
+                                            <ColumnListItem id="_IDGenColumnListItem2">
+                                                <cells>
+                                                    <Text id="_IDGenText3" text="{saleSummary}"/>
+                                                    <Text id="_IDGenText4" text="{Quantity}"/>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </content>
+                            </Panel>
+                            <Panel id="_IDGenPanel2" expandable="true" headerText="Purchase Summary" width="auto" class="sapUiResponsiveMargin">
+                                <content>
+                                    <Table id="purchaseTable" items="{/PurchaseSummary}">
+                                        <columns>
+                                            <Column id="_IDGenColumn4">
+                                                <Text id="_IDGenText5" text="Purchase Summary"/>
+                                            </Column>
+                                            <Column id="_IDGenColumn5" hAlign="End">
+                                                <Text id="_IDGenText6" text="Rupees/Liter"/>
+                                            </Column>
+                                        </columns>
+
+                                        <items>
+                                            <ColumnListItem id="_IDGenColumnListItem3">
+                                                <cells>
+                                                    <Text id="_IDGenText7" text="{saleSummary}"/>
+                                                    <Text id="_IDGenText8" text="{Quantity}"/>
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </content>
+                            </Panel>
+                        </IconTabFilter>
+                        <IconTabFilter text="NFA Template" id="nfatemplate" key="nfatemplate">
+                            <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+                                <form:content>
+                                    <core:Title/>
+                                   <!-- <Label text="Cash Discount" />
+                                    <Input value = ""/> -->
+                                    <Label text="Subject" class="sapUiTinyMarginBegin"/>
+                                    <Input id="subject" editable="true"/>
+                                    <Label text="Quantity" />
+                                    <Input value = "{nfaModel>/quantity}" editable="false"/>
+                                    <core:Title/>
+                                    <Label text="Payment Plan" />
+                                    <TextArea value = "{nfaModel>/paymentPlan}"/>
+                                    <Label text="Delivery" class="sapUiTinyMarginBegin"/>
+                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
+                                    <Label text="Quantity" />
+
+                                </form:content>
+                            </form:SimpleForm>
+                            <VBox >
+                                <Label text="Justification" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <rte:RichTextEditor id="_IDGenRichTextEditor1" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
+                                </rte:RichTextEditor>
+                            </VBox>
+                            <!-- <VBox>
+                                 <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
+                            </VBox> -->
+                            <VBox>
+                                 <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <ui:Table id="nfaMultiVendorTable1" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
+                            </VBox>
+                            <VBox>
+                                <Label text="Pack Wise Price" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <ui:Table id="nfaPackWiseTable" enableSelectAll= "false" selectionMode="None"/>
+                            </VBox>
+                            <VBox >
+                                <Label text="Purchase Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <rte:RichTextEditor id="_IDGenRichTextEditor2" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
+                                </rte:RichTextEditor>
+                            </VBox>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
+            </VBox>
+        </semantic:content>
+
+        <semantic:sendEmailAction>
+            <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
+        </semantic:sendEmailAction>
+        <semantic:footerCustomActions>
+            <Button id="syncRFQEvents" type="Emphasized" text="Sync RFQ Events" press="handleSyncRFQEvent"/>
+            <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
+            <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
+        </semantic:footerCustomActions>
+    </semantic:SemanticPage>
+
+</mvc:View>
