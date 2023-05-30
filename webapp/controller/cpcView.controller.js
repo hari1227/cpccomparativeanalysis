@@ -816,6 +816,28 @@ sap.ui.define([
                             //oDialog.setTokens(this._oMultiInput.getTokens());
                             oDialog.update();
 
+                            let oTable = oDialog.getTable();
+                            let aFilters = [];
+                            aFilters.push(new Filter({
+                                filters: [
+                                    new Filter({ path: "Ebeln_Ebeln", operator: 'EQ', value1: this.getView().byId("rfqInput").getSelectedKey() }),
+                                ],
+                                and: true
+                            }));
+                            // For Desktop and tabled the default table is sap.ui.table.Table
+                            if (oTable.bindRows) {
+                                // Bind rows to the ODataModel and add columns
+                                oTable.bindAggregation("rows", {
+                                    path: "/RFQEvents",
+                                    filters: aFilters,
+                                    events: {
+                                        dataReceived: function () {
+                                            oDialog.update();
+                                        }
+                                    }
+                                });
+                            }
+
                             oDialog.open();
                             return;
                         }
@@ -964,7 +986,9 @@ sap.ui.define([
 
                 this.byId("rfqInput").setSelectedKey(sDescription);
                 //this.byId("selectedKeyIndicator").setText(sDescription);
-                this.getView().byId("RFQEventFilter").setVisible(true);
+                this.getView().byId("RFQEventFilterValueHelp").setEnabled(true);
+                this.getView().byId("syncRFQEvents").setEnabled(true);
+                
             },
 
             onSuggestionItemSelected: function (oEvent) {
@@ -977,12 +1001,12 @@ sap.ui.define([
             // Function triggers after change of filters
             onItemsFiltered: function (oEvent) {
                 let selectedEvents = this.getView().byId("RFQEventFilterValueHelp").getTokens();
-               // this.selectedEvents = [];
+                // this.selectedEvents = [];
                 //let rfqNumber = this.getView().byId("rfqInput").getValue();
                 let filters = "?$filter=";
                 for (let i = 0; i < selectedEvents.length; i++) {
                     filters = i ? filters + " or eventID eq '" + selectedEvents[i].getKey() + "'" : filters + "eventID eq '" + selectedEvents[i].getKey() + "'";
-                   // this.selectedEvents.push(selectedEvents[i].getKey());
+                    // this.selectedEvents.push(selectedEvents[i].getKey());
                 }
                 var url = this.appModulePath + "/comparative-analysis/RFQEventCompDetails" + filters;
 
@@ -1009,7 +1033,7 @@ sap.ui.define([
                 // };
                 //this.nfaEvent = this.selectedEvents.slice(-1)[0];
                 //this.readNFAData(this.getView().byId("rfqInput").getSelectedKey(), this.nfaEvent);
-
+                this.getView().byId("nfatemplate").setEnabled(true);
             },
 
             handleNFASave: function () {
@@ -1332,14 +1356,72 @@ sap.ui.define([
                         processData: false,
                         data: JSON.stringify(data)
                     };
-                    // this.getView().setBusy(true);
+                     this.getView().setBusy(true);
                     $.ajax(settings)
                         .done(function (response) {
+                            this.getView().setBusy(false);
                             MessageBox.success("Successfully Events and awarded scenarios are synced");
                         }.bind(this)).fail(function () {
+                            this.getView().setBusy(false);
                             MessageBox.error(error.responseText);
                         });
                 }
+            },
+
+            handlePressSyncRfq: function () {
+                let sParams = {};
+                sParams.sPath = '/comparative-analysis/updateRFQList';
+                sParams.data = {}
+                sParams.method = 'POST';
+
+                let nePromise = new Promise(function (resolve, reject) {
+                    this.callAjax(sParams, resolve, reject);
+                }.bind(this));
+                nePromise.then(function (data) {
+                    let sMsg = "Data has been Synced";
+                    if (data.value) {
+                        sMsg = data.value;
+                    }
+                    sap.m.MessageBox.success(sMsg);
+                }.bind(this));
+            },
+
+            callAjax: function (sParams, resolve, reject) {
+                var appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
+                var appPath = appId.replaceAll(".", "/");
+                var appModulePath = jQuery.sap.getModulePath(appPath);
+                var settings = {
+                    async: true,
+                    url: appModulePath + sParams.sPath,
+                    method: sParams.method,
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    processData: false,
+                    data: JSON.stringify(sParams.data)
+                };
+                this.getView().setBusy(true);
+                $.ajax(settings)
+                    .done(function (data) {
+                        this.getView().setBusy(false);
+                        if (resolve) {
+                            resolve(data);
+                        } else {
+                            this.onGoButtonPress();
+                            sap.m.MessageBox.success("Data has been Synced");
+    
+                        }
+                    }.bind(this)
+                    )
+                    .fail(function (oError) {
+                        this.getView().setBusy(false);
+                        if (reject) {
+                            reject();
+                        }
+                        console.log(oError);
+                        MessageBox.error("1: Error while Sync please try again");
+                    }.bind(this));
             }
+
         });
     });

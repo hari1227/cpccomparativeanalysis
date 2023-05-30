@@ -32,10 +32,10 @@
                                 </Input>
                             </filterbar:control>
                         </filterbar:FilterGroupItem>
-                        <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true" visible="false">
+                        <filterbar:FilterGroupItem id="RFQEventFilter" groupName="RFQEventFilter" label="RFQ Event" name="RFQEvent" partOfCurrentVariant="true" visibleInFilterBar="true">
                             <filterbar:control>
                                 <!-- <MultiInput id="RFQEventFilterValueHelp" suggestionRows="{ path: '/RFQEvents'}" valueHelpRequest=".onValueHelpRequested"> -->
-                                    <MultiInput id="RFQEventFilterValueHelp" valueHelpRequest=".onValueHelpRequested">
+                                    <MultiInput id="RFQEventFilterValueHelp" valueHelpRequest=".onValueHelpRequested" enabled="false">
                                     <!-- <suggestionColumns>
                                         <Column>
                                             <Label text="RFQ"/>
@@ -134,7 +134,7 @@
                                 </content>
                             </Panel>
                         </IconTabFilter>
-                        <IconTabFilter text="NFA Template" id="nfatemplate" key="nfatemplate">
+                        <IconTabFilter text="NFA Template" id="nfatemplate" key="nfatemplate" enabled="false">
                             <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
                                 <form:content>
                                     <core:Title/>
@@ -185,7 +185,8 @@
             <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
         </semantic:sendEmailAction>
         <semantic:footerCustomActions>
-            <Button id="syncRFQEvents" type="Emphasized" text="Sync RFQ Events" press="handleSyncRFQEvent"/>
+            <Button id="syncRFQ" type="Emphasized" text = "Sync RFQ's" icon = "sap-icon://synchronize" press="handlePressSyncRfq"/>
+            <Button id="syncRFQEvents" type="Emphasized" icon = "sap-icon://synchronize" text="Sync RFQ Events" press="handleSyncRFQEvent" enabled="false"/>
             <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
             <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
         </semantic:footerCustomActions>
