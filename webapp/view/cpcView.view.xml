@@ -9,13 +9,13 @@
     xmlns:ui="sap.ui.table"
     xmlns:rte="sap.ui.richtexteditor">
 
-    <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true">
-
-        <semantic:titleHeading>
+    <!-- <semantic:SemanticPage id="page" headerPinnable="false" toggleHeaderOnTitleClick="false" showFooter="true"> -->
+    <Page title = "CPC Comparative Analysis">
+        <!-- <semantic:titleHeading>
             <Title id="_IDGenTitle1" text="Comparative Analysis" level="H2"/>
-        </semantic:titleHeading>
+        </semantic:titleHeading> -->
 
-        <semantic:content>
+        <content>
 
             <VBox id="contentLayout">
                 <filterbar:FilterBar id="RFQFilter" search="onItemsFiltered">
@@ -179,17 +179,28 @@
                     </items>
                 </IconTabBar>
             </VBox>
-        </semantic:content>
+        </content>
 
-        <semantic:sendEmailAction>
-            <semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
-        </semantic:sendEmailAction>
+        <!-- <semantic:messagesIndicator >
+            <semantic:MessagesIndicator id="warningsMessage" press=".onWarningMessageBtnPress" visible="true" />
+        </semantic:messagesIndicator>
         <semantic:footerCustomActions>
             <Button id="syncRFQ" type="Emphasized" text = "Sync RFQ's" icon = "sap-icon://synchronize" press="handlePressSyncRfq"/>
             <Button id="syncRFQEvents" type="Emphasized" icon = "sap-icon://synchronize" text="Sync RFQ Events" press="handleSyncRFQEvent" enabled="false"/>
             <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
             <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
-        </semantic:footerCustomActions>
-    </semantic:SemanticPage>
+        </semantic:footerCustomActions> -->
+        <footer>
+            <OverflowToolbar>
+                <Button id="warningsMessage" type="Emphasized" icon = "sap-icon://message-error" press="onWarningMessageBtnPress" enabled="false"/>
+                <ToolbarSpacer/>
+                <Button id="syncRFQ" type="Emphasized" text = "Sync RFQ's" icon = "sap-icon://synchronize" press="handlePressSyncRfq"/>
+                <Button id="syncRFQEvents" type="Emphasized" icon = "sap-icon://synchronize" text="Sync RFQ Events" press="handleSyncRFQEvent" enabled="false"/>
+                <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
+                <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
+            </OverflowToolbar>
+        </footer>
+    <!-- </semantic:SemanticPage> -->
+    </Page>
 
 </mvc:View>

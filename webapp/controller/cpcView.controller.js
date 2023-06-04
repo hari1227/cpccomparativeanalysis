@@ -8,12 +8,14 @@ sap.ui.define([
     'sap/ui/table/Column',
     'sap/m/Table',
     "sap/ui/core/Fragment",
-    'sap/m/MessageBox'
+    'sap/m/MessageBox',
+    'sap/m/MessagePopover',
+    'sap/m/MessageItem'
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, Filter, FilterOperator, SearchField, TypeString, UIColumn, mTable, Fragment, MessageBox) {
+    function (Controller, JSONModel, Filter, FilterOperator, SearchField, TypeString, UIColumn, mTable, Fragment, MessageBox, MessagePopover, MessageItem) {
         "use strict";
 
         return Controller.extend("cpccomparativeanalysis.controller.cpcView", {
@@ -66,6 +68,24 @@ sap.ui.define([
                 // };
 
                 // this.readNFAData("7000000026", "Doc652480915");
+
+                var oMessageTemplate = new MessageItem({
+                    title: '{warningsModel>title}',
+                    description: '{warningsModel>description}'
+                });
+
+                this.oMessagePopover = new MessagePopover({
+                    items: {
+                        path: 'warningsModel>/',
+                        template: oMessageTemplate
+                    },
+                    title: "Event Sync Errors"
+                });
+
+                var warningsModel = new JSONModel();
+                warningsModel.setData([]);
+                this.getView().setModel(warningsModel, "warningsModel");
+                this.byId("warningsMessage").addDependent(this.oMessagePopover);
             },
 
             readNFAData: function (rfqNumber, eventId) {
@@ -988,7 +1008,7 @@ sap.ui.define([
                 //this.byId("selectedKeyIndicator").setText(sDescription);
                 this.getView().byId("RFQEventFilterValueHelp").setEnabled(true);
                 this.getView().byId("syncRFQEvents").setEnabled(true);
-                
+
             },
 
             onSuggestionItemSelected: function (oEvent) {
@@ -1356,15 +1376,23 @@ sap.ui.define([
                         processData: false,
                         data: JSON.stringify(data)
                     };
-                     this.getView().setBusy(true);
+                    this.getView().setBusy(true);
                     $.ajax(settings)
                         .done(function (response) {
                             this.getView().setBusy(false);
-                            MessageBox.success("Successfully Events and awarded scenarios are synced");
-                        }.bind(this)).fail(function () {
+                            if (response.value.code === 202) {
+                                var warnings = response.value.message.warnings;
+                                this.getView().getModel("warningsModel").setData(warnings);
+                                this.getView().byId("warningsMessage").setText(warnings.length);
+                                this.getView().byId("warningsMessage").setEnabled(true);
+                                MessageBox.success("Events are sync partially refer message popover for the additional details");
+                            } else {
+                                MessageBox.success("Successfully Events and awarded scenarios are synced");
+                            }
+                        }.bind(this)).fail(function (error) {
                             this.getView().setBusy(false);
                             MessageBox.error(error.responseText);
-                        });
+                        }.bind(this));
                 }
             },
 
@@ -1409,7 +1437,7 @@ sap.ui.define([
                         } else {
                             this.onGoButtonPress();
                             sap.m.MessageBox.success("Data has been Synced");
-    
+
                         }
                     }.bind(this)
                     )
@@ -1421,6 +1449,10 @@ sap.ui.define([
                         console.log(oError);
                         MessageBox.error("1: Error while Sync please try again");
                     }.bind(this));
+            },
+
+            onWarningMessageBtnPress: function (oEvent) {
+                this.oMessagePopover.toggle(oEvent.getSource());
             }
 
         });
