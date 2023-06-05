@@ -446,7 +446,7 @@ sap.ui.define([
 
                     if (!(name in lookup)) {
                         lookup[name] = 1;
-                        vendorList.push(items[i]);
+                        vendorList.push(item);
                     }
                 }
 
@@ -1360,10 +1360,33 @@ sap.ui.define([
                 }
             },
 
-            handleSyncRFQEvent: function (oEvent) {
+            //Sync RFQ Event press action
+            handleSyncRFQEvent: function(oEvent) {
+                MessageBox.show(
+                    'Do you want to sync awarded scenario for NFA?',
+                    {
+                        icon: MessageBox.Icon.QUESTION,
+                        title: "Focus on a Custom Action",
+                        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                        emphasizedAction: MessageBox.Action.YES,
+
+                        onClose: function(oAction) {
+                            if(oAction === "YES") {
+                                this.syncRFQEvent(oEvent, 1);
+                            } else {
+                                this.syncRFQEvent(oEvent, 0);
+                            }
+                        }.bind(this)
+                    }
+                );
+            },
+
+            // Function to sync rfq event data
+            syncRFQEvent: function (oEvent, awardedScenario) {
                 if (this.getView().byId("rfqInput").getSelectedKey()) {
                     var data = {
-                        "rfq": this.getView().byId("rfqInput").getSelectedKey()
+                        "rfq": this.getView().byId("rfqInput").getSelectedKey(),
+                        "awardScenario": awardedScenario
                     }
                     // var token = this.fetchToken();
                     var settings = {
