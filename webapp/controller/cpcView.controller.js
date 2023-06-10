@@ -476,6 +476,18 @@ sap.ui.define([
                     }
                 }
 
+                //get unique events from the model data
+                lookup = {};
+                var uniqueEvents = [];
+                for (var item, i = 0; item = items[i++];) {
+                    let name = item.eventID;
+
+                    if (!(name in lookup)) {
+                        lookup[name] = 1;
+                        uniqueEvents.push(name);
+                    }
+                }
+
                 var self = this;
                 var finalData = { "ComparativeAnalysis": [] };
                 var skuPackingData = [];
@@ -483,6 +495,7 @@ sap.ui.define([
                 var productSKUData = {};
                 var productSKUTotal = {};
                 var productSKUAverage = {};
+                var particulars = [];
                 // productSKUAverage.itemTitle = "Average Price";
                 productSKUAverage.Particulars = "Average Price";
                 // productSKUTotal.itemTitle = "TOTAL";
@@ -494,6 +507,7 @@ sap.ui.define([
                     productData = {};
                     //  productData.itemTitle = uniqueProducts[i];
                     productData.Particulars = uniqueProducts[i];
+                    particulars.push(uniqueProducts[i]);
                     // For sku packing data - start
                     productSKUData = {};
                     // productSKUData.itemTitle = uniqueProducts[i];
@@ -501,7 +515,7 @@ sap.ui.define([
                     // PLAN = Sum of all the quantity of the unique product -> no used after discussion
                     //PLAN = Sum of all the quantity for each SKU based on the one vendor bid
                     productSKUData.PLAN = filteredData.filter(function (obj) {
-                        return vendorList[1].vendorMailId == obj.vendorMailId && self.selectedEvents[0].internalId == obj.eventID;
+                        return vendorList[1].vendorMailId == obj.vendorMailId && uniqueEvents[0] == obj.eventID;
                     }).reduce(function (accumulator, object) {
                         // if(vendorList[1].vendorMailId == object.vendorMailId && self.selectedEvents[0] == object.eventID) {
                         return accumulator + object.quantity;
@@ -680,6 +694,8 @@ sap.ui.define([
                 finalData.ComparativeAnalysis.push(productCashPrice);
 
                 //#region - Temp fix for currency format
+                particulars.push("Cash Price of FG");
+                particulars.push("TOTAL-- Rs./Lt");
                 const domesticFieldIdentifiers = {
                     itemId: [
                         "bulkCost",
@@ -689,14 +705,7 @@ sap.ui.define([
                         "otherExpenses",
                     ],
                     itemTitle: [],
-                    Particulars: [
-                        "Totto 500 ML",
-                        "Chlorveer Strong 1 Litre",
-                        "Chlorveer Strong 500 ml",
-                        "Chlorveer Strong 5 Litre",
-                        "Cash Price of FG",
-                        "TOTAL-- Rs./Lt"
-                    ]
+                    Particulars: particulars
                 }
 
                 finalData.ComparativeAnalysis = this.currencyFormatter(finalData.ComparativeAnalysis, domesticFieldIdentifiers);
@@ -748,22 +757,18 @@ sap.ui.define([
                 oTable.bindItems("/ComparativeAnalysis", aColList);
 
                 // Code for the packaging
-                this.showPackingTable(skuPackingData, vendorList);
+                this.showPackingTable(skuPackingData, vendorList, particulars);
             },
 
             // Function to display the packing table
-            showPackingTable: function (skuPackingData, vendorList) {
+            showPackingTable: function (skuPackingData, vendorList, particulars) {
 
+                particulars.push("TOTAL");
+                particulars.push("Average Price");
+                particulars.push("Average Price with CD");
                 //#region - temp fix for currency format
                 const domesticFieldIdentifiers = {
-                    Particulars: [
-                        'TOTAL', 'Average Price',
-                        'Average Price with CD',
-                        "Totto 500 ML",
-                        "Chlorveer Strong 1 Litre",
-                        "Chlorveer Strong 500 ml",
-                        "Chlorveer Strong 5 Litre",
-                    ],
+                    Particulars: particulars,
                 }
                 skuPackingData = this.currencyFormatter(skuPackingData, domesticFieldIdentifiers);
                 //#endregion - temp fix for currency format
