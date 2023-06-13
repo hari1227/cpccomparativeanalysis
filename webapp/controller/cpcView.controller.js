@@ -120,8 +120,13 @@ sap.ui.define([
                 $.get({
                     url: this.appModulePath + "/comparative-analysis/RFQEvents" + urlFilter, //"./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
+                        if(resp.value.length >0) {
                         this.nfaEventTitle = resp.value[0].title;
                         this.getView().byId("subject").setValue(resp.value[0].title);
+                        } else {
+                            this.nfaEventTitle ="";
+                            this.getView().byId("subject").setValue("");
+                        }
                     }.bind(this),
                     error: function (error) {
                         console.log(error);
@@ -651,7 +656,8 @@ sap.ui.define([
                 // Logic for the SKU clause fields
                 var productClause = [{ id: "shelfLife", name: "Shelf Life" },
                 { id: "gstInput", name: "GST Input" },
-                { id: "creditDays", name: "Credit Days" }];
+                { id: "creditDays", name: "Credit Days" },
+                { id: "incoterms", name: "Delivery" }];
                 var productClauseObj;
                 var productCashPrice = {};
                 var nfaproductClauseObj = {};
@@ -688,6 +694,7 @@ sap.ui.define([
                     if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
                         nfaRequiredData.push(productClauseObj);
                         this.nfaProductClauseTable.push(nfaproductClauseObj);
+                        productClauseObj.itemId == "creditDays"?skuPackingData.splice((skuPackingData.length - 3), 0, productClauseObj):"";
                     }
 
                 }
