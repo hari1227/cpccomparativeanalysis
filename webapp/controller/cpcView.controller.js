@@ -120,11 +120,11 @@ sap.ui.define([
                 $.get({
                     url: this.appModulePath + "/comparative-analysis/RFQEvents" + urlFilter, //"./comparative-analysis/RFQEventCompDetails",
                     success: function (resp) {
-                        if(resp.value.length >0) {
-                        this.nfaEventTitle = resp.value[0].title;
-                        this.getView().byId("subject").setValue(resp.value[0].title);
+                        if (resp.value.length > 0) {
+                            this.nfaEventTitle = resp.value[0].title;
+                            this.getView().byId("subject").setValue(resp.value[0].title);
                         } else {
-                            this.nfaEventTitle ="";
+                            this.nfaEventTitle = "";
                             this.getView().byId("subject").setValue("");
                         }
                     }.bind(this),
@@ -691,10 +691,10 @@ sap.ui.define([
                         }
                     }
                     // productClausevendorList.itemTitle = productClause[j];
-                    if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays") {
+                    if (productClauseObj.itemId == "gstInput" || productClauseObj.itemId == "creditDays" || productClauseObj.itemId == "incoterms") {
                         nfaRequiredData.push(productClauseObj);
                         this.nfaProductClauseTable.push(nfaproductClauseObj);
-                        productClauseObj.itemId == "creditDays"?skuPackingData.splice((skuPackingData.length - 3), 0, productClauseObj):"";
+                        productClauseObj.itemId == "creditDays" ? skuPackingData.splice((skuPackingData.length - 3), 0, productClauseObj) : "";
                     }
 
                 }
@@ -1219,7 +1219,7 @@ sap.ui.define([
         
                         <!-- Multiple vendor split table -->
                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer)">
-                            <h4 style="margin: 0">Multi Vendor Split</h4>
+                            <!-- <h4 style="margin: 0">Multi Vendor Split</h4> -->
                             <table border="1" style="${tableStyle}">
                                 <thead>
                                     <tr>
@@ -1236,7 +1236,8 @@ sap.ui.define([
                         <div style="display: flex; justify-content: space-between; margin: 0px var(--padding-buffer);">
                             <h4 style="flex: 1;"><span style="text-decoration: underline;">Quantity</span>: <span style="font-weight: 200;">${nfaOtherData.quantity}</span></h4>    
                         </div>
-        
+
+                        
                         <!-- Pack Wise Price table -->
                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer)">
                             <h4 style="margin: 0">Pack Wise Price</h4>
@@ -1255,9 +1256,9 @@ sap.ui.define([
                         <!--Dynamic Text field 2-->
                         <div style="padding: var(--padding-buffer)">${nfaOtherData.purchaseAnalysis}</div>
 
-                        <!-- Credit Period & Cash Discount table -->
+                        <!-- Credit Period, GST, Delivery(Incoterm) & Cash Discount table -->
                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer)">
-                            <h4 style="margin: 0">Credit Period & Cash Discount</h4>
+                            <h4 style="margin: 0">Other Details:</h4>
                             <table border="1" style="${tableStyle}">
                                 <thead>
                                     <tr>
@@ -1270,9 +1271,10 @@ sap.ui.define([
                             </table>
                         </div>
 
+
                         <!-- Manual fields-->
                         <div style="display: flex;flex-direction: column;padding: var(--padding-buffer);">
-                            <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Delivery:</span> <span style="font-weight: 200;">${nfaOtherData.deliveryPeriod}</span></h4>
+                          <!--  <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Delivery:</span> <span style="font-weight: 200;">${nfaOtherData.deliveryPeriod}</span></h4> -->
         
                             <h4 style="${dictGridStyle}"><span style="text-decoration: underline;">Payment Plan:</span> <span style="font-weight: 200;">${nfaOtherData.paymentPlan}</span></h4>
         
@@ -1285,21 +1287,6 @@ sap.ui.define([
         
                         <!--Dynamic Text field 3-->
                         <div style="padding: var(--padding-buffer); margin-top: 2em;">${nfaOtherData.purchaseAnalysis}</div>
-
-                        <!-- Packaging table -->
-                        <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer);${extraMargin}">
-                            <h4 style="margin: 0">Packaging</h4>
-                            <table border="1" style="${tableStyle}">
-                                <thead>
-                                    <tr>
-                                        ${getKeys(nfapackingTable).reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                        ${nfapackingTable.reduce((acc, cellData) => acc += `<tr>${getKeys(nfapackingTable).reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
-                                </tbody>
-                            </table>
-                        </div>
 
                         <!-- Companrative Analysis table -->
                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer);${extraMargin}">
@@ -1315,6 +1302,22 @@ sap.ui.define([
                                 </tbody>
                             </table>
                         </div>
+                        
+                         <!-- Packaging table -->
+                         <div style="display: flex;flex-direction: column; --border-size: 1px; padding: var(--padding-buffer);${extraMargin}">
+                         <h4 style="margin: 0">Packaging</h4>
+                         <table border="1" style="${tableStyle}">
+                             <thead>
+                                 <tr>
+                                     ${getKeys(nfapackingTable).reduce((acc, curr) => acc += `<th style="${cellStyle}">${curr}</th>`, "")}
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                     ${nfapackingTable.reduce((acc, cellData) => acc += `<tr>${getKeys(nfapackingTable).reduce((cellAcc, column, index) => cellAcc += `<td style="${cellStyle}${getAlignment(index)}">${cellData[column] || "-"}</td>`, "")}</tr>`, "")}
+                             </tbody>
+                         </table>
+                     </div>
+
                     </div>`;
                 const win = window.open();
                 const style = document.createElement('style');
@@ -1373,7 +1376,7 @@ sap.ui.define([
             },
 
             //Sync RFQ Event press action
-            handleSyncRFQEvent: function(oEvent) {
+            handleSyncRFQEvent: function (oEvent) {
                 MessageBox.show(
                     'Do you want to sync awarded scenario for NFA?',
                     {
@@ -1382,8 +1385,8 @@ sap.ui.define([
                         actions: [MessageBox.Action.YES, MessageBox.Action.NO],
                         emphasizedAction: MessageBox.Action.YES,
 
-                        onClose: function(oAction) {
-                            if(oAction === "YES") {
+                        onClose: function (oAction) {
+                            if (oAction === "YES") {
                                 this.syncRFQEvent(oEvent, 1);
                             } else {
                                 this.syncRFQEvent(oEvent, 0);

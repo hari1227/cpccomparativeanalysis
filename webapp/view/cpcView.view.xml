@@ -63,7 +63,7 @@
 
                 <IconTabBar id="comparativeAnalysis" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding" select="onITBSelectionChange">
                     <items>
-                        <IconTabFilter id="_IDGenIconTabFilter1" text="Comparative Analysis" key="ca">
+                        <IconTabFilter id="_IDGenIconTabFilter1" text="{i18n>cs}" key="ca">
                             <!-- <smartTable:SmartTable id="_IDGenSmartTable1"> -->
                             <VBox >
                                 <Table id="comparativeTable" inset="false" growing="true" growingScrollToLoad="true" alternateRowColors="true" class="tableCSS">
@@ -86,7 +86,7 @@
                                 </Table>
                             </VBox>
                         </IconTabFilter>
-                        <IconTabFilter id="summary" text="Sales/Purchase Summary" key="SS">
+                        <IconTabFilter id="summary" text="{i18n>summary}" key="SS">
                             <Panel id="_IDGenPanel1" expandable="true" headerText="Sales Summary" width="auto" class="sapUiResponsiveMargin">
                                 <content>
                                     <Table id="salesTable" items="{/SalesSummary}" >
@@ -134,27 +134,27 @@
                                 </content>
                             </Panel>
                         </IconTabFilter>
-                        <IconTabFilter text="NFA Template" id="nfatemplate" key="nfatemplate" enabled="false">
+                        <IconTabFilter text="{i18n>nfaTemplate}" id="nfatemplate" key="nfatemplate" enabled="false">
                             <form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
                                 <form:content>
                                     <core:Title/>
                                    <!-- <Label text="Cash Discount" />
                                     <Input value = ""/> -->
-                                    <Label text="Subject" class="sapUiTinyMarginBegin"/>
+                                    <Label text="{i18n>subject}" class="sapUiTinyMarginBegin"/>
                                     <Input id="subject" editable="true"/>
-                                    <Label text="Quantity" />
+                                    <Label text="{i18n>quantity}" />
                                     <Input value = "{nfaModel>/quantity}" editable="false"/>
                                     <core:Title/>
-                                    <Label text="Payment Plan" />
+                                    <Label text="{i18n>paymentSchedule}" />
                                     <TextArea value = "{nfaModel>/paymentPlan}"/>
-                                    <Label text="Delivery" class="sapUiTinyMarginBegin"/>
-                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/>
-                                    <Label text="Quantity" />
+                                    <!-- <Label text="Delivery" class="sapUiTinyMarginBegin"/>
+                                    <Input value = "{nfaModel>/deliveryPeriod}" editable="true"/> -->
+                                    <!-- <Label text="Quantity" /> -->
 
                                 </form:content>
                             </form:SimpleForm>
                             <VBox >
-                                <Label text="Justification" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <Label text="{i18n>justification}" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <rte:RichTextEditor id="_IDGenRichTextEditor1" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/Justification}">
                                 </rte:RichTextEditor>
                             </VBox>
@@ -163,15 +163,15 @@
                                 <ui:Table id="nfaMultiVendorTable" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
                             </VBox> -->
                             <VBox>
-                                 <Label text="Multi Vendor Split" class="sapUiTinyMarginTop" design = "Bold"/>
+                                 <Label text="{i18n>multiVendor}" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <ui:Table id="nfaMultiVendorTable1" enableSelectAll= "false" selectionMode="None" class="packingTableCSS"/>
                             </VBox>
                             <VBox>
-                                <Label text="Pack Wise Price" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <Label text="{i18n>packWisePrice}" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <ui:Table id="nfaPackWiseTable" enableSelectAll= "false" selectionMode="None"/>
                             </VBox>
                             <VBox >
-                                <Label text="Purchase Analysis" class="sapUiTinyMarginTop" design = "Bold"/>
+                                <Label text="{i18n>purchaseAnalysis}" class="sapUiTinyMarginTop" design = "Bold"/>
                                 <rte:RichTextEditor id="_IDGenRichTextEditor2" editorType="TinyMCE" width= "100%" height="5rem" customToolbar="false" showGroupFont= "true" showGroupLink= "true" showGroupInsert="true" value="{nfaModel>/purchaseAnalysis}">
                                 </rte:RichTextEditor>
                             </VBox>
@@ -194,10 +194,10 @@
             <OverflowToolbar>
                 <Button id="warningsMessage" type="Emphasized" icon = "sap-icon://message-error" press="onWarningMessageBtnPress" enabled="false"/>
                 <ToolbarSpacer/>
-                <Button id="syncRFQ" type="Emphasized" text = "Sync RFQ's" icon = "sap-icon://synchronize" press="handlePressSyncRfq"/>
-                <Button id="syncRFQEvents" type="Emphasized" icon = "sap-icon://synchronize" text="Sync RFQ Events" press="handleSyncRFQEvent" enabled="false"/>
-                <Button id="printPDF" type="Emphasized" text="Print NFA" press="onNFAPrint" visible="false"/>
-                <Button id="savePDF" text="Save NFA" press="handleNFASave"  visible="false"/>
+                <Button id="syncRFQ" type="Emphasized" text = "{i18n>rfqSync}" icon = "sap-icon://synchronize" press="handlePressSyncRfq"/>
+                <Button id="syncRFQEvents" type="Emphasized" icon = "sap-icon://synchronize" text="{i18n>rfqEventsSync}" press="handleSyncRFQEvent" enabled="false"/>
+                <Button id="printPDF" type="Emphasized" text="{i18n>printNFA}" press="onNFAPrint" visible="false"/>
+                <Button id="savePDF" text="{i18n>saveNFA}" press="handleNFASave"  visible="false"/>
             </OverflowToolbar>
         </footer>
     <!-- </semantic:SemanticPage> -->
